@@ -1,3 +1,15 @@
+> library(readr)
+> refine_original <- read_csv("~/Springboard/Foundations of Data Science/R projects/refine_original.csv")
+Parsed with column specification:
+cols(
+  company = col_character(),
+  `Product code / number` = col_character(),
+  address = col_character(),
+  city = col_character(),
+  country = col_character(),
+  name = col_character()
+)
+
 > refine_df %>% mutate(company = tolower(company))
 
 > refine_df <- refine_df %>% mutate(company = tolower(company))
