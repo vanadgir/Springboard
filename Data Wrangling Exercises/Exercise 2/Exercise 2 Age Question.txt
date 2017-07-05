@@ -1,0 +1,22 @@
+Data Wrangling Exercise 2
+
+AGE
+2. Think about other ways you could have populated the missing values in the age column. Why would you pick any of those over the mean (or not)?
+
+Instead of the overall mean, you could find the mean of related subsets for the passengers (like gender).  Another approach could be to delve deeper into the distribution and, instead of applying the mean age to all NA entries, try to split it into subsets of mean, 1 std.dev. above/below, 2 std.dev. above/below, etc.  This method would maintain the overall distribution, but the ages will make more sense overall (even if they are assigned to the wrong passenger).
+
+CABIN
+4a. Does it make sense to fill missing cabin numbers with a value?
+
+It depends, because "cabin number" is a qualititative value and not a quantitative one, so assigning an arbitrary number does not clarify anything (unlike age which can be abitrarily assigned a mean value).  If we could confirm that no cabin number means they are a staff member, we could assign "staff" as the cabin value.  Otherwise, assigning a new value would be difficult.
+
+4b. What does a missing value here mean?
+
+It probably means that the person was not a passenger and was a staff member instead.  There was most likely a staff sleeping quarters, but it may be that there are not assigned cabin numbers for them.  
+
+No Cabin, Didn't Survive -- 707
+No Cabin, Survived -- 307
+Cabin, Didn't Survive -- 102
+Cabin, Survived -- 193
+
+It seems likely that passengers were given priority when getting onto lifeboats, while those we assume to be staff were left behind.
