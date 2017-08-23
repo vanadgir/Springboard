@@ -3,8 +3,8 @@ title: "Data Story"
 author: "Varun Nadgir"
 date: "August 14, 2017"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -201,7 +201,7 @@ library(readr)
 
 majors_data <- read_csv("~/Springboard/Foundations of Data Science/data/majors_data.csv")
 
-# plot Avg % of Maths Degrees by STATE over YEARS
+# plot Avg % of History Degrees by STATE over YEARS
 ggplot(majors_data, 
        aes(x = majors_data$DATAYEAR, 
            y = majors_data$PCIP54_AVG, 
