@@ -91,7 +91,9 @@ sat_adm_data <- select(sat_adm_data, one_of(c("INSTNM", "REGION", "DATAYEAR", "S
 write_csv(sat_adm_data, path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/sat_adm_data.csv", col_names = TRUE)
 
 # filter to bottom right of plot, for closer look to see which states/schools are there
+sat_adm_data <- mutate(sat_adm_data, ADM_RATE = as.numeric(ADM_RATE), SAT_AVG = as.numeric(SAT_AVG))
 sat_adm_data_high <- filter(sat_adm_data, sat_adm_data$SAT_AVG > 1250, sat_adm_data$ADM_RATE < 0.25)
+write_csv(sat_adm_data_high, path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/sat_adm_data_high.csv", col_names = TRUE)
 
 
 # -- 2. prepare data for PCIP## (major) by STABBR --
