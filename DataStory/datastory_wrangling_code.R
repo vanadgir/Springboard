@@ -77,7 +77,6 @@ data <-
 # citation:
 # http://www.reed.edu/data-at-reed/resources/R/reading_and_writing.html
 
-				 
 # make data copy to keep in directory, for quick use during future sessions
 write_csv(data, path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/fulldata.csv", col_names = TRUE)
 
@@ -86,7 +85,7 @@ fulldata <- read_csv("~/Springboard/Foundations of Data Science/data/fulldata.cs
 
 # How To Break Up The Data:
 # Data Needed for Plotting
-# 1. prepare data for SAT by ADM
+#  -- 1. prepare data for SAT by ADM -- 
 sat_adm_data <- filter(minidata, DATAYEAR %in% c("2001-'02", "2002-'03", "2003-'04", "2004-'05", "2005-'06", "2006-'07", "2007-'08", "2008-'09", "2009-'10", "2010-'11", "2011-'12", "2012-'13", "2013-'14", "2014-'15"))
 sat_adm_data <- select(sat_adm_data, one_of(c("INSTNM", "REGION", "DATAYEAR", "SAT_AVG", "ADM_RATE")))
 write_csv(sat_adm_data, path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/sat_adm_data.csv", col_names = TRUE)
@@ -95,7 +94,7 @@ write_csv(sat_adm_data, path = "C:/Users/themi/Documents/Springboard/Foundations
 sat_adm_data_high <- filter(sat_adm_data, sat_adm_data$SAT_AVG > 1250, sat_adm_data$ADM_RATE < 0.25)
 
 
-# 2. prepare data for PCIP## (major) by STABBR
+# -- 2. prepare data for PCIP## (major) by STABBR --
 majors_fields <- names(fulldata) %in% c("UNITID", "OPEID", "OPEID6", "INSTNM", "REGION", "STABBR", "PREDDEG", "SCH_DEG", "PCIP01", "PCIP03", "PCIP04", "PCIP05", "PCIP09", "PCIP10", "PCIP11", "PCIP12", "PCIP13", "PCIP14", "PCIP15", "PCIP16", "PCIP19", "PCIP22", "PCIP23", "PCIP24", "PCIP25", "PCIP26", "PCIP27", "PCIP29", "PCIP30", "PCIP31", "PCIP38", "PCIP39", "PCIP40", "PCIP41", "PCIP42", "PCIP43", "PCIP44", "PCIP45", "PCIP46", "PCIP47", "PCIP48", "PCIP49", "PCIP50", "PCIP51", "PCIP52", "PCIP54", "UG", "UGDS", "CURROPER", "ICLEVEL", "DATAYEAR")
 majors_data_raw <- fulldata[majors_fields]
 write_csv(majors_data_raw, path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/majors_data_raw.csv", col_names = TRUE)
@@ -206,7 +205,7 @@ pcip_data_small <- select(pcip_data, c(PCIP09_AVG, PCIP13_AVG, PCIP14_AVG, PCIP2
 majors_data_small <- select(majors_data, c(STABBR, DATAYEAR, PCIP09_AVG, PCIP13_AVG, PCIP14_AVG, PCIP26_AVG, PCIP27_AVG, PCIP38_AVG, PCIP40_AVG, PCIP42_AVG, PCIP45_AVG, PCIP47_AVG, PCIP50_AVG, PCIP52_AVG, PCIP54_AVG))	
 
 	
-# 3. COSTT4_A (cost for Title IV aid students) by NUM4_PUB (Title IV students total) and NUM##PUB and NUM##PRIV (breakdown of household income)
+# -- 3. COSTT4_A (cost for Title IV aid students) by NUM4_PUB (Title IV students total) and NUM##PUB and NUM##PRIV (breakdown of household income) --
 # COSTT4_P by NUM4_PRIV and NUM##PROG  	
 cost_fields <- names(fulldata) %in% c("UNITID", "OPEID", "OPEID6", "INSTNM", "COSTT4_A", "COSTT4_P", "NUM4_PUB", "NUM4_PRIV", "NUM4_PROG", "NUM41_PUB", "NUM42_PUB", "NUM43_PUB", "NUM44_PUB", "NUM45_PUB", "NUM41_PRIV", "NUM42_PRIV", "NUM43_PRIV", "NUM44_PRIV", "NUM45_PRIV", "NUM41_PROG", "NUM42_PROG", "NUM43_PROG", "NUM44_PROG", "NUM45_PROG", "DATAYEAR")
 cost_data_raw <- fulldata[cost_fields]

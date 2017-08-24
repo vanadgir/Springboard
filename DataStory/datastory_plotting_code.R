@@ -1,4 +1,4 @@
-# assuming this session begins after .csv files have been built
+# assuming a new session
 library(ggplot2)
 library(readr)
 
@@ -6,7 +6,7 @@ library(readr)
 fulldata <- read_csv("~/Springboard/Foundations of Data Science/data/fulldata.csv")
 
 # import these as needed for plots
-sat_adm_data <- read_csv("~/Springboard/Foundations of Data Science/data/admission_data.csv")
+sat_adm_data <- read_csv("~/Springboard/Foundations of Data Science/data/sat_adm_data.csv")
 sat_adm_data_high <- read_csv("~/Springboard/Foundations of Data Science/data/sat_adm_data_high.csv")
 majors_data_raw <- read_csv("~/Springboard/Foundations of Data Science/data/majors_data_raw.csv")
 majors_data <- read_csv("~/Springboard/Foundations of Data Science/data/majors_data.csv")
@@ -37,20 +37,19 @@ ggplot(sat_adm_data_high,
            y = as.numeric(sat_adm_data_high$ADM_RATE), 
            col = factor(sat_adm_data_high$STABBR), 
            label = sat_adm_data_high$STABBR)) +
-  geom_point(alpha = 0.5, size = 1.25) + 
-  labs(x = "Avg SAT score", 
-       y = "Admission Rate") + 
-  facet_wrap( ~ sat_adm_data_high$DATAYEAR) + 
-  scale_colour_discrete(name = "State/Territory", h = c(0, 270)) +
-  theme(legend.position = "none", 
-        panel.grid.major = element_line(colour = "grey"), 
-        panel.border = element_rect(linetype = "solid", 
-                                    fill = "NA"),
-        strip.background = element_rect(fill = "black"),
-        strip.text = element_text(size = 8, colour = "white")) +
-  geom_jitter() + 
-  coord_cartesian(xlim=c(1250, 1600)) + 
-  geom_text(size = 4, alpha = 0.8, hjust = 0, nudge_x = 0.05, vjust = -0.1)
+    labs(x = "Avg SAT score", 
+         y = "Admission Rate") + 
+    facet_wrap( ~ sat_adm_data_high$DATAYEAR) + 
+    scale_colour_discrete(name = "State/Territory", h = c(0, 270)) +
+    theme(legend.position = "none", 
+          panel.grid.major = element_line(colour = "grey"), 
+          panel.border = element_rect(linetype = "solid", 
+                                      fill = "NA"),
+          strip.background = element_rect(fill = "black"),
+          strip.text = element_text(size = 8, colour = "white")) +
+    geom_jitter() + 
+    coord_cartesian(xlim=c(1250, 1600)) + 
+    geom_label(size = 3, alpha = 0.5)
 
 
 # % of MATH degrees awarded by STATE over TIME
@@ -62,7 +61,7 @@ ggplot(majors_data,
   labs(x = "Academic Year",
        y = "Avg % of Math Degrees Awarded") + 
   facet_wrap( ~ STABBR) + 
-  scale_colour_discrete(name = "DataYear") +
+  scale_colour_discrete(name = "DataYear (1996-'97 to 2014-'15)") +
   theme(legend.position = "none", 
         panel.border = element_rect(linetype = "solid", 
                                     fill = "NA"),
@@ -78,7 +77,7 @@ ggplot(majors_data,
   labs(x = "Academic Year",
        y = "Avg % of History Degrees Awarded") + 
   facet_wrap( ~ STABBR) + 
-  scale_colour_discrete(name = "DataYear") +
+  scale_colour_discrete(name = "DataYear (1996-'97 to 2014-'15)") +
   theme(legend.position = "none", 
         panel.border = element_rect(linetype = "solid", 
                                     fill = "NA"),
