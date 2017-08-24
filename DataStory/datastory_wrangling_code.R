@@ -78,12 +78,6 @@ data <-
 # http://www.reed.edu/data-at-reed/resources/R/reading_and_writing.html
 
 				 
-# make list of data fields to exclude
-exfields <- names(data) %in% c("INSTURL", "NPCURL")
-
-# drop fields
-data <- data[!exfields]
-
 # make data copy to keep in directory, for quick use during future sessions
 write_csv(data, path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/fulldata.csv", col_names = TRUE)
 
