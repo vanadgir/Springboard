@@ -1,11 +1,15 @@
-# assuming a new session
+# assuming this session begins after .csv files have been built
 library(ggplot2)
 library(readr)
+
+# only import this if needed (so almost never)
 fulldata <- read_csv("~/Springboard/Foundations of Data Science/data/fulldata.csv")
 
-
+# import these as needed for plots
 sat_adm_data <- read_csv("~/Springboard/Foundations of Data Science/data/admission_data.csv")
+sat_adm_data_high <- read_csv("~/Springboard/Foundations of Data Science/data/sat_adm_data_high.csv")
 majors_data_raw <- read_csv("~/Springboard/Foundations of Data Science/data/majors_data_raw.csv")
+majors_data <- read_csv("~/Springboard/Foundations of Data Science/data/majors_data.csv")
 cost_data_raw <- read_csv("~/Springboard/Foundations of Data Science/data/cost_data_raw.csv")
 minidata <- read_csv("~/Springboard/Foundations of Data Science/data/minidata.csv")
 
