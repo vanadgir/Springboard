@@ -84,6 +84,15 @@ write_csv(data, path = "C:/Users/themi/Documents/Springboard/Foundations of Data
 fulldata <- read_csv("~/Springboard/Foundations of Data Science/data/fulldata.csv")
 
 # How To Break Up The Data:
+# fields to include in mini dataset
+minifields <- names(fulldata) %in% c("UNITID", "OPEID", "OPEID6", "DATAYEAR", "INSTNM", "ALIAS", "CITY", "STABBR", "ZIP", "ACCREDAGENCY", "SCH_DEG", "MAIN", "NUMBRANCH", "PREDDEG", "HIGHDEG", "CONTROL", "ST_FIPS", "REGION", "LATITUDE", "LONGITUDE", "CCUGPROF", "MENONLY", "WOMENONLY", "RELAFFIL", "ADM_RATE", "ADM_RATE_ALL", "SAT_AVG", "SAT_AVG_ALL", "UGDS", "UG", "CURROPER", "COST4_A", "COST4_P", "TUITIONFEE_IN", "TUITIONFEE_OUT", "AVGFACSAL", "PFTFAC", "C150_4", "C150_L4", "C150_4_POOLED", "C150_L4_POOLED", "PCTFLOAN", "UG25ABV", "CDR2", "CDR3", "DEBT_MDN", "GRAD_DEBT_MDN", "LO_INC_DEBT_MDN", "MD_INC_DEBT_MDN", "HI_INC_DEBT_MDN", "MEDIAN_HH_INC", "ICLEVEL")
+
+minidata <- fulldata[minifields]
+write_csv(data, path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/fulldata.csv", col_names = TRUE)
+
+# to filter out US territories (keep states and DC)
+us_states <- c("AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID", "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", "NE", "NH", "NJ", "NM", "NV", "NY", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VA", "VT", "WA", "WI", "WV", "WY")
+
 # Data Needed for Plotting
 #  -- 1. prepare data for SAT by ADM -- 
 sat_adm_data <- filter(minidata, DATAYEAR %in% c("2001-'02", "2002-'03", "2003-'04", "2004-'05", "2005-'06", "2006-'07", "2007-'08", "2008-'09", "2009-'10", "2010-'11", "2011-'12", "2012-'13", "2013-'14", "2014-'15"))
@@ -94,6 +103,12 @@ write_csv(sat_adm_data, path = "C:/Users/themi/Documents/Springboard/Foundations
 sat_adm_data <- mutate(sat_adm_data, ADM_RATE = as.numeric(ADM_RATE), SAT_AVG = as.numeric(SAT_AVG))
 sat_adm_data_high <- filter(sat_adm_data, sat_adm_data$SAT_AVG > 1250, sat_adm_data$ADM_RATE < 0.25)
 write_csv(sat_adm_data_high, path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/sat_adm_data_high.csv", col_names = TRUE)
+
+# filter out US territories  
+sat_adm_data_US <- subset(sat_adm_data, sat_adm_data$STABBR %in% us_states)
+sat_adm_data_US_high <- subset(sat_adm_data_high, sat_adm_data_high$STABBR %in% us_states)
+write_csv(sat_adm_data_US, path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/sat_adm_data_US.csv", col_names = TRUE)
+write_csv(sat_adm_data_US_high, path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/sat_adm_data_US_high.csv", col_names = TRUE)
 
 
 # -- 2. prepare data for PCIP## (major) by STABBR --
@@ -202,9 +217,19 @@ write_csv(majors_data, path = "C:/Users/themi/Documents/Springboard/Foundations 
 
 # to load up majors data frames again
 majors_data <- read_csv("~/Springboard/Foundations of Data Science/data/majors_data.csv")
-pcip_data <- select(majors_data, starts_with("PCIP"))
-pcip_data_small <- select(pcip_data, c(PCIP09_AVG, PCIP13_AVG, PCIP14_AVG, PCIP26_AVG, PCIP27_AVG, PCIP38_AVG, PCIP40_AVG, PCIP42_AVG, PCIP45_AVG, PCIP47_AVG, PCIP50_AVG, PCIP52_AVG, PCIP54_AVG))
-majors_data_small <- select(majors_data, c(STABBR, DATAYEAR, PCIP09_AVG, PCIP13_AVG, PCIP14_AVG, PCIP26_AVG, PCIP27_AVG, PCIP38_AVG, PCIP40_AVG, PCIP42_AVG, PCIP45_AVG, PCIP47_AVG, PCIP50_AVG, PCIP52_AVG, PCIP54_AVG))	
+
+# filter out US territories (keep just states and DC)
+majors_data_US <- subset(majors_data, majors_data$STABBR %in% us_states)
+write_csv(majors_data_US, path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/majors_data_US.csv", col_names = TRUE)
+
+# flip data to be able to plot MAJORS for a STATE over TIME
+majors_data_degrees <- select(majors_data, one_of(c("STABBR", "DATAYEAR")), contains("_degrees"))
+majors_data_degrees <- melt(majors_data_degrees)
+
+# get just MA data
+majors_data_MA <- filter(majors_data_degrees, STABBR == "MA")
+write_csv(majors_data_MA, path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/majors_data_MA.csv", col_names = TRUE)
+
 
 	
 # -- 3. COSTT4_A (cost for Title IV aid students) by NUM4_PUB (Title IV students total) and NUM##PUB and NUM##PRIV (breakdown of household income) --
