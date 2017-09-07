@@ -106,6 +106,7 @@ ggplot(sat_adm_data_US_high,
 library(ggplot2)
 library(readr)
 
+# load in dataset
 majors_data_US <- read_csv("~/Springboard/Foundations of Data Science/data/majors_data_US.csv")
 
 # plot Avg % of Maths Degrees by STATE over YEARS
@@ -163,4 +164,4 @@ ggplot(majors_data_US,
 
 ## Conclusion
 
-  After preparing the data and trying a few initial plots, my approach feels good but has some room for improvement. The plots look nice and are legible, but it is possible to draw the wrong conclusions. In the case of the Majors data, I would like to set a Y-scale that makes it easier to compare the trends across multiple Majors. I would also like to be able to hover some points to see plot details and adding some general interactivity would make this dataset much more useful. I will be looking into Shiny and how to incorporate that into my next projects. I also want to expand my research into other areas like cost, debt, and repayment. Since my goal is to ultimately have some sort of web service or app that helps in giving school suggestions, the visualizations I provide will have to present the information in such a way that a layperson will be able to make reasonable conclusions from what they see. This means cleanliness of the data and clarity in the plotting are a must.
+  After preparing the data and trying a few initial plots, my approach feels good but has some room for improvement. The plots look nice and are legible, but it is possible to draw the wrong conclusions. In the case of the Majors data, I would like to set a Y-scale that makes it easier to compare the trends across multiple Majors. I would also like to be able to hover some points to see plot details and adding some general interactivity would make this dataset much more useful. I will be looking into Shiny and how to incorporate that into my next projects. I also want to expand my research into other areas like cost, debt, and repayment. Since my goal is to ultimately have some sort of web service or app that helps in giving school suggestions, the visualizations I provide will have to present the information in such a way that a layperson will be able to make reasonable conclusions from what they see. This means cleanliness of the data and clarity in the plotting are a must. For those interested in seeing my process in detail and want to see the code behind the plots, please refer to my [**appendix**](http://varun.pro/Springboard/DataStory/CSappendix.html) for more information.
