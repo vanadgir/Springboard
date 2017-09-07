@@ -1,0 +1,453 @@
+---
+title: "The College Scorecard"
+author: "Varun Nadgir"
+date: "September 6, 2017"
+output:
+  html_document: default
+  header-includes:
+  - \setlength{\parindent}{4em}
+  - \setlength{\parskip}{0em}
+  pdf_document: default
+---
+
+<style>
+body {text-align: justify}
+p {text-indent: 50px}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
+
+# Appendix
+
+This is the documentation for my study on [**The College Scorecard**](https://catalog.data.gov/dataset/college-scorecard). Here I will explain how I prepared the data and I will provide the code to generate the plots in my [**data story**](http://www.varun.pro/Springboard/DataStory/collegescorecard.html). All data manipulation and plotting was done using [**RStudio**](https://www.rstudio.com/). If you wish to copy and paste anything here, just remember to change the file paths. Be sure to refer to [**the data dictionary**](https://collegescorecard.ed.gov/data/documentation/) to understand what data points are available.
+
+## Data Preparation
+
+To begin, download **CollegeScorecard_Raw_Data.zip** from the link provided above and extract the files. This will give you 19 .csv files and another .zip file (which we will not need at this time). The 19 .csv files will have names like **MERGED1996_97_PP**, indicating the data collection year. To be able to plot and compare all available data points, we will be merging these files into one .csv so that we can subset it as needed for our plots. Before merging, we will need to add a column to each of the existing .csv files that gives us the data year.
+
+```{r dataprep}
+#load libraries
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(sqldf)
+
+# path to folder that holds multiple .csv files
+# change path if copy-pasting
+folder <- "C:/Users/themi/Documents/Springboard/Foundations of Data Science/project files/"      
+
+# creates list of all .csv files in folder
+file_list <- list.files(path=folder, pattern="*.csv")
+
+# read in each .csv file in file_list and create a data frame with the same name as the .csv file
+for (i in 1:length(file_list)){
+  assign(file_list[i], 
+  read.csv(paste(folder, file_list[i], sep=''))
+)}
+```
+
+This will read in every .csv from the specified folder into R as a data frame, with the same name as the file. Next, I added a new column **DATAYEAR** and then wrote them to a separate folder as new .csv files.
+
+```{r dataprep2}
+# add data collection year tag
+MERGED1996_97_PP.csv <- MERGED1996_97_PP.csv %>% mutate(DATAYEAR = "1996-'97")
+MERGED1997_98_PP.csv <- MERGED1997_98_PP.csv %>% mutate(DATAYEAR = "1997-'98")
+MERGED1998_99_PP.csv <- MERGED1998_99_PP.csv %>% mutate(DATAYEAR = "1998-'99")
+MERGED1999_00_PP.csv <- MERGED1999_00_PP.csv %>% mutate(DATAYEAR = "1999-'00")
+MERGED2000_01_PP.csv <- MERGED2000_01_PP.csv %>% mutate(DATAYEAR = "2000-'01")
+MERGED2001_02_PP.csv <- MERGED2001_02_PP.csv %>% mutate(DATAYEAR = "2001-'02")
+MERGED2002_03_PP.csv <- MERGED2002_03_PP.csv %>% mutate(DATAYEAR = "2002-'03")
+MERGED2003_04_PP.csv <- MERGED2003_04_PP.csv %>% mutate(DATAYEAR = "2003-'04")
+MERGED2004_05_PP.csv <- MERGED2004_05_PP.csv %>% mutate(DATAYEAR = "2004-'05")
+MERGED2005_06_PP.csv <- MERGED2005_06_PP.csv %>% mutate(DATAYEAR = "2005-'06")
+MERGED2006_07_PP.csv <- MERGED2006_07_PP.csv %>% mutate(DATAYEAR = "2006-'07")
+MERGED2007_08_PP.csv <- MERGED2007_08_PP.csv %>% mutate(DATAYEAR = "2007-'08")
+MERGED2008_09_PP.csv <- MERGED2008_09_PP.csv %>% mutate(DATAYEAR = "2008-'09")
+MERGED2009_10_PP.csv <- MERGED2009_10_PP.csv %>% mutate(DATAYEAR = "2009-'10")
+MERGED2010_11_PP.csv <- MERGED2010_11_PP.csv %>% mutate(DATAYEAR = "2010-'11")
+MERGED2011_12_PP.csv <- MERGED2011_12_PP.csv %>% mutate(DATAYEAR = "2011-'12")
+MERGED2012_13_PP.csv <- MERGED2012_13_PP.csv %>% mutate(DATAYEAR = "2012-'13")
+MERGED2013_14_PP.csv <- MERGED2013_14_PP.csv %>% mutate(DATAYEAR = "2013-'14")
+MERGED2014_15_PP.csv <- MERGED2014_15_PP.csv %>% mutate(DATAYEAR = "2014-'15")
+
+# write new csv with new column
+# if copy-pasting, use find+replace to change the file path leading up to the filename
+write_csv(MERGED1996_97_PP.csv, 
+          path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/MERGED1996_97_PP.csv", 
+          col_names = TRUE)
+write_csv(MERGED1997_98_PP.csv, 
+          path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/MERGED1997_98_PP.csv", 
+          col_names = TRUE)
+write_csv(MERGED1998_99_PP.csv, 
+          path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/MERGED1998_99_PP.csv", 
+          col_names = TRUE)
+write_csv(MERGED1999_00_PP.csv, 
+          path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/MERGED1999_00_PP.csv", 
+          col_names = TRUE)
+write_csv(MERGED2000_01_PP.csv, 
+          path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/MERGED2000_01_PP.csv", 
+          col_names = TRUE)
+write_csv(MERGED2001_02_PP.csv, 
+          path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/MERGED2001_02_PP.csv",
+          col_names = TRUE)
+write_csv(MERGED2002_03_PP.csv, 
+          path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/MERGED2002_03_PP.csv", 
+          col_names = TRUE)
+write_csv(MERGED2003_04_PP.csv, 
+          path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/MERGED2003_04_PP.csv", 
+          col_names = TRUE)
+write_csv(MERGED2004_05_PP.csv, 
+          path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/MERGED2004_05_PP.csv", 
+          col_names = TRUE)
+write_csv(MERGED2005_06_PP.csv, 
+          path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/MERGED2005_06_PP.csv", 
+          col_names = TRUE)
+write_csv(MERGED2006_07_PP.csv, 
+          path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/MERGED2006_07_PP.csv",
+          col_names = TRUE)
+write_csv(MERGED2007_08_PP.csv, 
+          path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/MERGED2007_08_PP.csv", 
+          col_names = TRUE)
+write_csv(MERGED2008_09_PP.csv, 
+          path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/MERGED2008_09_PP.csv", 
+          col_names = TRUE)
+write_csv(MERGED2009_10_PP.csv, 
+          path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/MERGED2009_10_PP.csv", 
+          col_names = TRUE)
+write_csv(MERGED2010_11_PP.csv, 
+          path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/MERGED2010_11_PP.csv", 
+          col_names = TRUE)
+write_csv(MERGED2011_12_PP.csv, 
+          path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/MERGED2011_12_PP.csv", 
+          col_names = TRUE)
+write_csv(MERGED2012_13_PP.csv, 
+          path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/MERGED2012_13_PP.csv", 
+          col_names = TRUE)
+write_csv(MERGED2013_14_PP.csv, 
+          path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/MERGED2013_14_PP.csv", 
+          col_names = TRUE)
+write_csv(MERGED2014_15_PP.csv, 
+          path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/MERGED2014_15_PP.csv", 
+          col_names = TRUE)
+```
+
+After creating the new .csv files, I read them into R once again - this time into a single data frame. Then I wrote this data frame as a .csv to my computer, yielding a 2 GB file which I named **fulldata.csv**. This file is the complete raw dataset that can then be subsetted and used to run calculations.
+
+```{r dataprep3}
+# path to new folder that holds multiple .csv files
+# change path if copy-pasting
+data_folder <- "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/"      
+
+# create new list of all .csv files in folder
+data_list <- list.files(path=data_folder, pattern="*.csv")
+
+# read in each .csv file in file_list and rbind them into a data frame called data 
+data <- 
+  do.call("rbind", 
+          lapply(data_list, 
+                 function(x) 
+                 read.csv(paste(data_folder, x, sep=''), 
+                 stringsAsFactors = FALSE)))
+
+# make data copy to keep in directory
+# change path if copy-pasting
+write_csv(data, 
+          path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/fulldata.csv", 
+          col_names = TRUE)
+
+# if starting a new session and need to load in fulldata
+# change path if copy-pasting
+fulldata <- read_csv("~/Springboard/Foundations of Data Science/data/fulldata.csv")
+```
+
+## Subsetting the Data 
+
+Since this dataset is fairly large, it does not make sense to keep reading in this file to run calculations and plotting. While fulldata.csv is loaded, I created some subset datasets that I can also save to my computer, making it easier to load what I need in future sessions (thus saving computer memory by not needing to load fulldata.csv). These subsets are created with the plots in mind, so they only contain the relevant columns and, in some cases, may also be filtered by rows.
+
+```{r subsets}
+# to create minidata, a subset of datapoints that seemed useful
+minifields <- names(fulldata) %in% c("UNITID", "OPEID", "OPEID6", "DATAYEAR", "INSTNM", "ALIAS", "CITY", "STABBR", "ZIP", "ACCREDAGENCY", "SCH_DEG", "MAIN", "NUMBRANCH", "PREDDEG", "HIGHDEG", "CONTROL", "ST_FIPS", "REGION", "LATITUDE", "LONGITUDE", "CCUGPROF", "MENONLY", "WOMENONLY", "RELAFFIL", "ADM_RATE", "ADM_RATE_ALL", "SAT_AVG", "SAT_AVG_ALL", "UGDS", "UG", "CURROPER", "COST4_A", "COST4_P", "TUITIONFEE_IN", "TUITIONFEE_OUT", "AVGFACSAL", "PFTFAC", "C150_4", "C150_L4", "C150_4_POOLED", "C150_L4_POOLED", "PCTFLOAN", "UG25ABV", "CDR2", "CDR3", "DEBT_MDN", "GRAD_DEBT_MDN", "LO_INC_DEBT_MDN", "MD_INC_DEBT_MDN", "HI_INC_DEBT_MDN", "MEDIAN_HH_INC", "ICLEVEL")
+
+minidata <- fulldata[minifields]
+
+# change path if copy-pasting
+write_csv(data, path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/fulldata.csv", col_names = TRUE)
+
+# admissions data
+# filter out years with no data
+sat_adm_data <- filter(minidata, DATAYEAR %in% c("2001-'02", "2002-'03", "2003-'04", "2004-'05", "2005-'06", "2006-'07", "2007-'08", "2008-'09", "2009-'10", "2010-'11", "2011-'12", "2012-'13", "2013-'14", "2014-'15"))
+
+# select only necessary columns
+sat_adm_data <- select(sat_adm_data, one_of(c("INSTNM", "REGION", "DATAYEAR", "SAT_AVG", "ADM_RATE")))
+
+# save .csv for later use
+# change path if copy-pasting
+write_csv(sat_adm_data, 
+          path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/sat_adm_data.csv", 
+          col_names = TRUE)
+
+# filter to bottom right of plot, for closer look to see which states/schools are there
+# coerce to numeric 
+sat_adm_data <- mutate(sat_adm_data, ADM_RATE = as.numeric(ADM_RATE), SAT_AVG = as.numeric(SAT_AVG))
+
+# apply filter and save as new data frame
+sat_adm_data_high <- filter(sat_adm_data, sat_adm_data$SAT_AVG > 1250, sat_adm_data$ADM_RATE < 0.25)
+
+# save new .csv
+# change path if copy-pasting
+write_csv(sat_adm_data_high, 
+          path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/sat_adm_data_high.csv", 
+          col_names = TRUE)
+
+# create a list to filter out US territories (keep states and DC)
+us_states <- c("AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID", "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", "NE", "NH", "NJ", "NM", "NV", "NY", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VA", "VT", "WA", "WI", "WV", "WY")
+
+# filter out US territories and save new .csv
+sat_adm_data_US <- subset(sat_adm_data, sat_adm_data$STABBR %in% us_states)
+sat_adm_data_US_high <- subset(sat_adm_data_high, sat_adm_data_high$STABBR %in% us_states)
+
+# save new csv
+# change path if copy-pasting
+write_csv(sat_adm_data_US, 
+          path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/sat_adm_data_US.csv", 
+          col_names = TRUE)
+
+# change path if copy-pasting
+write_csv(sat_adm_data_US_high, 
+          path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/sat_adm_data_US_high.csv",
+          col_names = TRUE)
+```
+
+This gives us admissions data in a few different forms: all admissions/SAT records, those that are filtered to the top percentages, and then those with the US territories filtered out. While I used the US-only dataset in my plots, the others are also valid. 
+
+Next, I created subsets for plotting the % of degrees awarded by state. This required some calculations as well as filtering - to estimate the average number of degrees awarded across the entire state, I took "undergraduate population" * (0.25) and multiplied that by the percentage of degrees awarded to get an estimate for total degrees awarded in that state. Then I divided that by the total number of undergraduate students in that state to get an estimate for the percentage of students with that degree for the state.
+
+```{r subsets2}
+# select fields required for majors data
+majors_fields <- names(fulldata) %in% c("UNITID", "OPEID", "OPEID6", "INSTNM", "REGION", "STABBR", "PREDDEG", "SCH_DEG", "PCIP01", "PCIP03", "PCIP04", "PCIP05", "PCIP09", "PCIP10", "PCIP11", "PCIP12", "PCIP13", "PCIP14", "PCIP15", "PCIP16", "PCIP19", "PCIP22", "PCIP23", "PCIP24", "PCIP25", "PCIP26", "PCIP27", "PCIP29", "PCIP30", "PCIP31", "PCIP38", "PCIP39", "PCIP40", "PCIP41", "PCIP42", "PCIP43", "PCIP44", "PCIP45", "PCIP46", "PCIP47", "PCIP48", "PCIP49", "PCIP50", "PCIP51", "PCIP52", "PCIP54", "UG", "UGDS", "CURROPER", "ICLEVEL", "DATAYEAR")
+
+# create dataset in raw form
+majors_data_raw <- fulldata[majors_fields]
+
+# save dataset
+# change path if copy-pasting
+write_csv(majors_data_raw, 
+          path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/majors_data_raw.csv", 
+          col_names = TRUE)
+
+# remove UG data field
+majors_data_clean <- select(majors_data_clean, -UG)
+# remove UGDS that are not recorded
+majors_data_clean <- filter(majors_data_clean, UGDS != "NULL")
+# remove less than 2-year schools (ICLEVEL = 3)
+majors_data_clean <- filter(majors_data_clean, ICLEVEL != 3)
+# remove PREDDEG = 0 (not classified)
+majors_data_clean <- filter(majors_data_clean, PREDDEG != 0)
+# make UG_approx column
+majors_data_clean <- mutate(majors_data_clean, UG_approx = UGDS*0.25)
+
+# create new columns for estimated total number of awarded degrees for each major
+majors_data_clean$PCIP01_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP01)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP03_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP03)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP04_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP04)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP05_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP05)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP09_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP09)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP10_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP10)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP11_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP11)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP12_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP12)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP13_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP13)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP14_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP14)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP15_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP15)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP16_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP16)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP19_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP19)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP22_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP22)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP23_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP23)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP24_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP24)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP25_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP25)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP26_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP26)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP27_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP27)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP29_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP29)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP30_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP30)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP31_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP31)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP38_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP38)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP39_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP39)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP40_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP40)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP41_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP41)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP42_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP42)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP43_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP43)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP44_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP44)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP45_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP45)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP46_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP46)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP47_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP47)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP48_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP48)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP49_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP49)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP50_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP50)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP51_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP51)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP52_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP52)*as.numeric(majors_data_clean$UG_approx))
+majors_data_clean$PCIP54_degrees <- with(majors_data_clean, as.numeric(majors_data_clean$PCIP54)*as.numeric(majors_data_clean$UG_approx))
+
+# sum up the degrees and undergrad populations by state
+majors_data <- sqldf("SELECT STABBR, DATAYEAR, sum(UGDS) as UGDS, sum(UG_approx) as UG_approx, sum(PCIP01_degrees) as PCIP01_degrees, sum(PCIP03_degrees) as PCIP03_degrees, sum(PCIP04_degrees) as PCIP04_degrees, sum(PCIP05_degrees) as PCIP05_degrees, sum(PCIP09_degrees) as PCIP09_degrees, sum(PCIP10_degrees) as PCIP10_degrees, sum(PCIP11_degrees) as PCIP11_degrees, sum(PCIP12_degrees) as PCIP12_degrees, sum(PCIP13_degrees) as PCIP13_degrees, sum(PCIP14_degrees) as PCIP14_degrees, sum(PCIP15_degrees) as PCIP15_degrees, sum(PCIP16_degrees) as PCIP16_degrees, sum(PCIP19_degrees) as PCIP19_degrees, sum(PCIP22_degrees) as PCIP22_degrees, sum(PCIP23_degrees) as PCIP23_degrees, sum(PCIP24_degrees) as PCIP24_degrees, sum(PCIP25_degrees) as PCIP25_degrees, sum(PCIP26_degrees) as PCIP26_degrees, sum(PCIP27_degrees) as PCIP27_degrees, sum(PCIP29_degrees) as PCIP29_degrees, sum(PCIP30_degrees) as PCIP30_degrees, sum(PCIP31_degrees) as PCIP31_degrees, sum(PCIP38_degrees) as PCIP38_degrees, sum(PCIP39_degrees) as PCIP39_degrees, sum(PCIP40_degrees) as PCIP40_degrees, sum(PCIP41_degrees) as PCIP41_degrees, sum(PCIP42_degrees) as PCIP42_degrees, sum(PCIP43_degrees) as PCIP43_degrees, sum(PCIP44_degrees) as PCIP44_degrees, sum(PCIP45_degrees) as PCIP45_degrees, sum(PCIP46_degrees) as PCIP46_degrees, sum(PCIP47_degrees) as PCIP47_degrees, sum(PCIP48_degrees) as PCIP48_degrees, sum(PCIP49_degrees) as PCIP49_degrees, sum(PCIP50_degrees) as PCIP50_degrees, sum(PCIP51_degrees) as PCIP51_degrees, sum(PCIP52_degrees) as PCIP52_degrees, sum(PCIP54_degrees) as PCIP54_degrees from majors_data_clean GROUP BY STABBR, DATAYEAR")
+
+# save new column, the new calculated average % of degrees awarded for each major
+majors_data$PCIP01_AVG <- with(majors_data, ((majors_data$PCIP01_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP03_AVG <- with(majors_data, ((majors_data$PCIP03_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP04_AVG <- with(majors_data, ((majors_data$PCIP04_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP05_AVG <- with(majors_data, ((majors_data$PCIP05_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP09_AVG <- with(majors_data, ((majors_data$PCIP09_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP10_AVG <- with(majors_data, ((majors_data$PCIP10_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP11_AVG <- with(majors_data, ((majors_data$PCIP11_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP12_AVG <- with(majors_data, ((majors_data$PCIP12_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP13_AVG <- with(majors_data, ((majors_data$PCIP13_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP14_AVG <- with(majors_data, ((majors_data$PCIP14_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP15_AVG <- with(majors_data, ((majors_data$PCIP15_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP16_AVG <- with(majors_data, ((majors_data$PCIP16_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP19_AVG <- with(majors_data, ((majors_data$PCIP19_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP22_AVG <- with(majors_data, ((majors_data$PCIP22_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP23_AVG <- with(majors_data, ((majors_data$PCIP23_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP24_AVG <- with(majors_data, ((majors_data$PCIP24_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP25_AVG <- with(majors_data, ((majors_data$PCIP25_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP26_AVG <- with(majors_data, ((majors_data$PCIP26_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP27_AVG <- with(majors_data, ((majors_data$PCIP27_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP29_AVG <- with(majors_data, ((majors_data$PCIP29_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP30_AVG <- with(majors_data, ((majors_data$PCIP30_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP31_AVG <- with(majors_data, ((majors_data$PCIP31_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP38_AVG <- with(majors_data, ((majors_data$PCIP38_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP39_AVG <- with(majors_data, ((majors_data$PCIP39_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP40_AVG <- with(majors_data, ((majors_data$PCIP40_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP41_AVG <- with(majors_data, ((majors_data$PCIP41_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP42_AVG <- with(majors_data, ((majors_data$PCIP42_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP43_AVG <- with(majors_data, ((majors_data$PCIP43_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP44_AVG <- with(majors_data, ((majors_data$PCIP44_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP45_AVG <- with(majors_data, ((majors_data$PCIP45_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP46_AVG <- with(majors_data, ((majors_data$PCIP46_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP47_AVG <- with(majors_data, ((majors_data$PCIP47_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP48_AVG <- with(majors_data, ((majors_data$PCIP48_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP49_AVG <- with(majors_data, ((majors_data$PCIP49_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP50_AVG <- with(majors_data, ((majors_data$PCIP50_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP51_AVG <- with(majors_data, ((majors_data$PCIP51_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP52_AVG <- with(majors_data, ((majors_data$PCIP52_degrees)/(majors_data$UG_approx))*100)
+majors_data$PCIP54_AVG <- with(majors_data, ((majors_data$PCIP54_degrees)/(majors_data$UG_approx))*100)
+
+# save this current state of majors data
+# change path if copy-pasting
+write_csv(majors_data, path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/majors_data.csv", col_names = TRUE)
+
+# filter out US territories (keep just states and DC)
+# change path if copy-pasting
+majors_data_US <- subset(majors_data, majors_data$STABBR %in% us_states)
+write_csv(majors_data_US, path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/majors_data_US.csv", col_names = TRUE)
+```
+
+After all of that, we are left with majors_data and majors_data_US, which can be used for plotting. In my project, I focused on US states only, but majors_data has data on US territories as well, for those who are interested. 
+
+## Plotting 
+
+Here are the code blocks for the plots in my [**data story**](http://www.varun.pro/Springboard/DataStory/collegescorecard.html). You will notice that I am using the US-only subsets for my project, but you can change those to the fuller datasets if you are interested in looking at the US territories as well (or you can create another subset for *only* the territories for an isolated view). Just be sure to find+replace the name of the data frame and the file paths.
+
+### Fig. 1.1:
+
+```{r fig1.1}
+# import data for plot
+# change path if copy-pasting
+sat_adm_data_US <- read_csv("~/Springboard/Foundations of Data Science/data/sat_adm_data_US.csv")
+
+
+# scatter plot with X as SAT AVG and Y as ADM RATE, facet by DATAYEAR, coloured by STABBR
+ggplot(sat_adm_data_US, 
+       aes(x = as.numeric(sat_adm_data_US$SAT_AVG), 
+           y = as.numeric(sat_adm_data_US$ADM_RATE), 
+           col = factor(sat_adm_data_US$STABBR))) + 
+  geom_point(alpha = 0.5, size = 1.25) + 
+  labs(x = "Avg SAT score", y = "Admission Rate", 
+       title = "Fig. 1.1: Admission Rate by Avg. SAT Score") + 
+  facet_wrap( ~ sat_adm_data_US$DATAYEAR) + 
+  scale_colour_discrete(h = c(0, 270)) +
+  theme(legend.position = "none", 
+        panel.border = element_rect(linetype = "solid", fill = "NA"),
+        strip.background = element_rect(fill = "black"),
+        strip.text = element_text(size = 8, colour = "white")) +
+  geom_jitter()
+```
+
+
+### Fig. 1.2: 
+
+```{r fig1.2}
+# import data for plot
+# change path if copy-pasting
+sat_adm_data_US_high <- read_csv("~/Springboard/Foundations of Data Science/data/sat_adm_data_US_high.csv")
+                                    
+# shrink plot range
+ggplot(sat_adm_data_US_high, 
+       aes(x = sat_adm_data_US_high$SAT_AVG, 
+           y = sat_adm_data_US_high$ADM_RATE, 
+           col = factor(sat_adm_data_US_high$STABBR))) + 
+    geom_point(size = 2) +
+	labs(x = "Avg SAT score", y = "Admission Rate", 
+		title = "Fig. 1.2: Admission Rate by Avg. SAT Score") + 
+    facet_wrap( ~ sat_adm_data_US_high$DATAYEAR) + 
+	theme(legend.position = "none", 
+		panel.grid.major = element_line(colour = "grey"), 
+		panel.border = element_rect(linetype = "solid", fill = "NA"),
+		strip.background = element_rect(fill = "black"),
+        strip.text = element_text(size = 8, colour = "white")) 
+```
+
+### Fig. 2.1:
+
+```{r fig2.1}
+# import data for plot
+# change path if copy-pasting
+majors_data_US <- read_csv("~/Springboard/Foundations of Data Science/data/majors_data_US.csv")
+
+# plot Avg % of Maths Degrees by STATE over YEARS
+ggplot(majors_data_US, 
+       aes(x = majors_data_US$DATAYEAR, 
+           y = majors_data_US$PCIP27_AVG, 
+           col = majors_data_US$DATAYEAR)) + 
+  geom_bar(stat = "identity") + 
+  labs(x = "Academic Year (1996-'97 to 2014-'15)",
+       y = "Avg % of Math Degrees Awarded",
+       title = "Fig. 2.1: % of Mathematics Degrees Awarded by State") + 
+  facet_wrap( ~ STABBR) + 
+  scale_colour_discrete(name = "DataYear") +
+  theme(legend.position = "none", 
+        panel.border = element_rect(linetype = "solid", fill = "NA"),
+        strip.background = element_rect(fill = "black"),
+        strip.text = element_text(size = 8, colour = "white"),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank())
+```
+
+### Fig. 2.2:
+
+```{r fig2.2}
+# import data for plot
+# change path if copy-pasting
+majors_data_US <- read_csv("~/Springboard/Foundations of Data Science/data/majors_data_US.csv")
+
+# plot Avg % of History Degrees by STATE over YEARS
+ggplot(majors_data_US, 
+       aes(x = majors_data_US$DATAYEAR, 
+           y = majors_data_US$PCIP54_AVG, 
+           col = majors_data_US$DATAYEAR)) + 
+  geom_bar(stat = "identity") + 
+  labs(x = "Academic Year (1996-'97 to 2014-'15)",
+       y = "Avg % of History Degrees Awarded",
+       title = "Fig. 2.2: % of History Degrees Awarded by State") + 
+  facet_wrap( ~ STABBR) + 
+  scale_colour_discrete(name = "DataYear") +
+  theme(legend.position = "none", 
+        panel.border = element_rect(linetype = "solid", fill = "NA"),
+        strip.background = element_rect(fill = "black"),
+        strip.text = element_text(size = 8, colour = "white"),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank())
+```
+
+## Final Remarks
+
+As a beginner to R and RStudio, a lot of my process has room for improvement - namely the large code chunks where I perform changes one-by-one. These could definitely be done easier with loops. There are also many other libraries out there that I don't know about yet that could be useful. For those interested in doing their own study of the college scorecard dataset, my approach is one way to do it but not quite the most efficient way. If you have any questions or suggestions for me, feel free to [**email me**](mailto:vanadgir@gmail.com).
