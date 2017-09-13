@@ -428,11 +428,58 @@ write_csv(majors_data, path = &quot;C:/Users/themi/Documents/Springboard/Foundat
 # change path if copy-pasting
 majors_data_US &lt;- subset(majors_data, majors_data$STABBR %in% us_states)
 write_csv(majors_data_US, path = &quot;C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/majors_data_US.csv&quot;, col_names = TRUE)</code></pre>
-<p>After all of that, we are left with majors_data and majors_data_US, which can be used for plotting. In my project, I focused on US states only, but majors_data has data on US territories as well, for those who are interested.</p>
+<p>Next, we also want to create a data frame that will have national averages calculated rather than state-by-state, so we can see how a state performs compared to the country as a whole. To prepare this data frame, we perform a lot of the similar steps to creating majors_data.</p>
+<pre class="r"><code># remove STABBR from earlier aggregation, this will take averages by year only
+majors_data_nat &lt;- sqldf(&quot;SELECT DATAYEAR, sum(UGDS) as UGDS, sum(UG_approx) as UG_approx, sum(PCIP01_degrees) as PCIP01_degrees, sum(PCIP03_degrees) as PCIP03_degrees, sum(PCIP04_degrees) as PCIP04_degrees, sum(PCIP05_degrees) as PCIP05_degrees, sum(PCIP09_degrees) as PCIP09_degrees, sum(PCIP10_degrees) as PCIP10_degrees, sum(PCIP11_degrees) as PCIP11_degrees, sum(PCIP12_degrees) as PCIP12_degrees, sum(PCIP13_degrees) as PCIP13_degrees, sum(PCIP14_degrees) as PCIP14_degrees, sum(PCIP15_degrees) as PCIP15_degrees, sum(PCIP16_degrees) as PCIP16_degrees, sum(PCIP19_degrees) as PCIP19_degrees, sum(PCIP22_degrees) as PCIP22_degrees, sum(PCIP23_degrees) as PCIP23_degrees, sum(PCIP24_degrees) as PCIP24_degrees, sum(PCIP25_degrees) as PCIP25_degrees, sum(PCIP26_degrees) as PCIP26_degrees, sum(PCIP27_degrees) as PCIP27_degrees, sum(PCIP29_degrees) as PCIP29_degrees, sum(PCIP30_degrees) as PCIP30_degrees, sum(PCIP31_degrees) as PCIP31_degrees, sum(PCIP38_degrees) as PCIP38_degrees, sum(PCIP39_degrees) as PCIP39_degrees, sum(PCIP40_degrees) as PCIP40_degrees, sum(PCIP41_degrees) as PCIP41_degrees, sum(PCIP42_degrees) as PCIP42_degrees, sum(PCIP43_degrees) as PCIP43_degrees, sum(PCIP44_degrees) as PCIP44_degrees, sum(PCIP45_degrees) as PCIP45_degrees, sum(PCIP46_degrees) as PCIP46_degrees, sum(PCIP47_degrees) as PCIP47_degrees, sum(PCIP48_degrees) as PCIP48_degrees, sum(PCIP49_degrees) as PCIP49_degrees, sum(PCIP50_degrees) as PCIP50_degrees, sum(PCIP51_degrees) as PCIP51_degrees, sum(PCIP52_degrees) as PCIP52_degrees, sum(PCIP54_degrees) as PCIP54_degrees from majors_data_clean GROUP BY DATAYEAR&quot;)
+
+# run calculations for the average
+majors_data_nat$PCIP01_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP01_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP03_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP03_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP04_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP04_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP05_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP05_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP09_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP09_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP10_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP10_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP11_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP11_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP12_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP12_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP13_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP13_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP14_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP14_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP15_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP15_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP16_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP16_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP19_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP19_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP22_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP22_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP23_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP23_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP24_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP24_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP25_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP25_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP26_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP26_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP27_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP27_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP29_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP29_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP30_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP30_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP31_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP31_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP38_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP38_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP39_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP39_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP40_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP40_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP41_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP41_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP42_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP42_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP43_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP43_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP44_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP44_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP45_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP45_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP46_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP46_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP47_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP47_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP48_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP48_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP49_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP49_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP50_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP50_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP51_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP51_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP52_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP52_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP54_AVG &lt;- with(majors_data_nat, ((majors_data_nat$PCIP54_degrees)/(majors_data_nat$UG_approx))*100)
+
+# save majors_data_nat
+# change path if copy-pasting
+write_csv(majors_data_nat, path = &quot;C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/majors_data_nat.csv)&quot;, col_names = TRUE)</code></pre>
+<p>After all of that, we are left with majors_data, majors_data_US, and majors_data_nat.</p>
 </div>
 <div id="plotting" class="section level2">
 <h2>Plotting</h2>
-<p>Here are the code blocks for the plots in my <a href="http://www.varun.pro/Springboard/DataStory/collegescorecard.html"><strong>data story</strong></a>. You will notice that I am using the US-only subsets for my project, but you can change those to the fuller datasets if you are interested in looking at the US territories as well (or you can create another subset for <em>only</em> the territories for an isolated view). Just be sure to find+replace the name of the data frame and the file paths.</p>
+<p>Here are the code blocks for the plots in my <a href="http://www.varun.pro/Springboard/DataStory/collegescorecard.html"><strong>data story</strong></a>. The data frames used at this stage of the project are <strong>sat_adm_data_US</strong>, <strong>sat_adm_data_US_high</strong>, <strong>majors_data_us</strong>, and <strong>majors_data_nat</strong>. You will notice that I am using the US-only subsets for my project, but you can change those to the fuller datasets if you are interested in looking at the US territories as well (or you can create another subset for <em>only</em> the territories for an isolated view). Just be sure to find+replace the name of the data frame and the file paths.</p>
 <div id="fig.-1.1" class="section level3">
 <h3>Fig. 1.1:</h3>
 <pre class="r"><code># import data for plot
@@ -505,6 +552,32 @@ ggplot(majors_data_US,
 <h3>Fig. 2.2:</h3>
 <pre class="r"><code># import data for plot
 # change path if copy-pasting
+majors_data_nat &lt;- read_csv(&quot;~/Springboard/Foundations of Data Science/data/majors_data_nat.csv&quot;)
+
+# plot Avg % of Maths Degrees Nationally
+ggplot(majors_data_nat, 
+       aes(x = majors_data_nat$DATAYEAR, 
+           y = majors_data_nat$PCIP27_AVG, 
+           fill = majors_data_nat$DATAYEAR)) + 
+  geom_bar(stat = &quot;identity&quot;) + 
+  labs(x = &quot;Academic Year (1996-'97 to 2014-'15)&quot;,
+       y = &quot;Avg % of Math Degrees Awarded&quot;,
+       title = &quot;Fig. 3.1: % of Maths Degrees Awarded Nationally&quot;) + 
+  scale_colour_discrete(name = &quot;DataYear&quot;) +
+  theme(legend.position = &quot;none&quot;, 
+        panel.border = element_rect(linetype = &quot;solid&quot;, fill = &quot;NA&quot;),
+        strip.background = element_rect(fill = &quot;black&quot;),
+        strip.text = element_text(size = 8, colour = &quot;white&quot;),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank()) + 
+    geom_text(aes(label = sprintf(&quot;%.02f %%&quot;, majors_data_nat$PCIP27_AVG)), 
+              colour = &quot;black&quot;,
+              size = 3)</code></pre>
+</div>
+<div id="fig.-3.1" class="section level3">
+<h3>Fig. 3.1:</h3>
+<pre class="r"><code># import data for plot
+# change path if copy-pasting
 majors_data_US &lt;- read_csv(&quot;~/Springboard/Foundations of Data Science/data/majors_data_US.csv&quot;)
 
 # plot Avg % of History Degrees by STATE over YEARS
@@ -515,7 +588,7 @@ ggplot(majors_data_US,
   geom_bar(stat = &quot;identity&quot;) + 
   labs(x = &quot;Academic Year (1996-'97 to 2014-'15)&quot;,
        y = &quot;Avg % of History Degrees Awarded&quot;,
-       title = &quot;Fig. 2.2: % of History Degrees Awarded by State&quot;) + 
+       title = &quot;Fig. 3.1: % of History Degrees Awarded by State&quot;) + 
   facet_wrap( ~ STABBR) + 
   scale_colour_discrete(name = &quot;DataYear&quot;) +
   theme(legend.position = &quot;none&quot;, 
@@ -524,6 +597,32 @@ ggplot(majors_data_US,
         strip.text = element_text(size = 8, colour = &quot;white&quot;),
         axis.text.x = element_blank(),
         axis.ticks.x = element_blank())</code></pre>
+</div>
+<div id="fig.-3.2" class="section level3">
+<h3>Fig. 3.2:</h3>
+<pre class="r"><code># import data for plot
+# change path if copy-pasting
+majors_data_nat &lt;- read_csv(&quot;~/Springboard/Foundations of Data Science/data/majors_data_nat.csv&quot;)
+
+# plot Avg % of History Degrees Nationally
+ggplot(majors_data_nat, 
+       aes(x = majors_data_nat$DATAYEAR, 
+           y = majors_data_nat$PCIP54_AVG, 
+           fill = majors_data_nat$DATAYEAR)) + 
+  geom_bar(stat = &quot;identity&quot;) + 
+  labs(x = &quot;Academic Year (1996-'97 to 2014-'15)&quot;,
+       y = &quot;Avg % of History Degrees Awarded&quot;,
+       title = &quot;Fig. 3.1: % of History Degrees Awarded Nationally&quot;) + 
+  scale_colour_discrete(name = &quot;DataYear&quot;) +
+  theme(legend.position = &quot;none&quot;, 
+        panel.border = element_rect(linetype = &quot;solid&quot;, fill = &quot;NA&quot;),
+        strip.background = element_rect(fill = &quot;black&quot;),
+        strip.text = element_text(size = 8, colour = &quot;white&quot;),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank()) + 
+    geom_text(aes(label = sprintf(&quot;%.02f %%&quot;, majors_data_nat$PCIP54_AVG)), 
+              colour = &quot;black&quot;,
+              size = 3)</code></pre>
 </div>
 </div>
 <div id="final-remarks" class="section level2">

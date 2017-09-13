@@ -110,6 +110,13 @@ sat_adm_data_US_high <- subset(sat_adm_data_high, sat_adm_data_high$STABBR %in% 
 write_csv(sat_adm_data_US, path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/sat_adm_data_US.csv", col_names = TRUE)
 write_csv(sat_adm_data_US_high, path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/sat_adm_data_US_high.csv", col_names = TRUE)
 
+# IMG for html export in RMD
+<center> ![](high_sat_low_adm.png) </center>
+
+# IMG for PDF export in RMD
+\begin{center}
+\includegraphics{high_sat_low_adm.png}
+\end{center}
 
 # -- 2. prepare data for PCIP## (major) by STABBR --
 majors_fields <- names(fulldata) %in% c("UNITID", "OPEID", "OPEID6", "INSTNM", "REGION", "STABBR", "PREDDEG", "SCH_DEG", "PCIP01", "PCIP03", "PCIP04", "PCIP05", "PCIP09", "PCIP10", "PCIP11", "PCIP12", "PCIP13", "PCIP14", "PCIP15", "PCIP16", "PCIP19", "PCIP22", "PCIP23", "PCIP24", "PCIP25", "PCIP26", "PCIP27", "PCIP29", "PCIP30", "PCIP31", "PCIP38", "PCIP39", "PCIP40", "PCIP41", "PCIP42", "PCIP43", "PCIP44", "PCIP45", "PCIP46", "PCIP47", "PCIP48", "PCIP49", "PCIP50", "PCIP51", "PCIP52", "PCIP54", "UG", "UGDS", "CURROPER", "ICLEVEL", "DATAYEAR")
@@ -222,14 +229,50 @@ majors_data <- read_csv("~/Springboard/Foundations of Data Science/data/majors_d
 majors_data_US <- subset(majors_data, majors_data$STABBR %in% us_states)
 write_csv(majors_data_US, path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/majors_data_US.csv", col_names = TRUE)
 
-# flip data to be able to plot MAJORS for a STATE over TIME
-majors_data_degrees <- select(majors_data, one_of(c("STABBR", "DATAYEAR")), contains("_degrees"))
-majors_data_degrees <- melt(majors_data_degrees)
+# now try to find national level statistics
+majors_data_nat <- sqldf("SELECT DATAYEAR, sum(UGDS) as UGDS, sum(UG_approx) as UG_approx, sum(PCIP01_degrees) as PCIP01_degrees, sum(PCIP03_degrees) as PCIP03_degrees, sum(PCIP04_degrees) as PCIP04_degrees, sum(PCIP05_degrees) as PCIP05_degrees, sum(PCIP09_degrees) as PCIP09_degrees, sum(PCIP10_degrees) as PCIP10_degrees, sum(PCIP11_degrees) as PCIP11_degrees, sum(PCIP12_degrees) as PCIP12_degrees, sum(PCIP13_degrees) as PCIP13_degrees, sum(PCIP14_degrees) as PCIP14_degrees, sum(PCIP15_degrees) as PCIP15_degrees, sum(PCIP16_degrees) as PCIP16_degrees, sum(PCIP19_degrees) as PCIP19_degrees, sum(PCIP22_degrees) as PCIP22_degrees, sum(PCIP23_degrees) as PCIP23_degrees, sum(PCIP24_degrees) as PCIP24_degrees, sum(PCIP25_degrees) as PCIP25_degrees, sum(PCIP26_degrees) as PCIP26_degrees, sum(PCIP27_degrees) as PCIP27_degrees, sum(PCIP29_degrees) as PCIP29_degrees, sum(PCIP30_degrees) as PCIP30_degrees, sum(PCIP31_degrees) as PCIP31_degrees, sum(PCIP38_degrees) as PCIP38_degrees, sum(PCIP39_degrees) as PCIP39_degrees, sum(PCIP40_degrees) as PCIP40_degrees, sum(PCIP41_degrees) as PCIP41_degrees, sum(PCIP42_degrees) as PCIP42_degrees, sum(PCIP43_degrees) as PCIP43_degrees, sum(PCIP44_degrees) as PCIP44_degrees, sum(PCIP45_degrees) as PCIP45_degrees, sum(PCIP46_degrees) as PCIP46_degrees, sum(PCIP47_degrees) as PCIP47_degrees, sum(PCIP48_degrees) as PCIP48_degrees, sum(PCIP49_degrees) as PCIP49_degrees, sum(PCIP50_degrees) as PCIP50_degrees, sum(PCIP51_degrees) as PCIP51_degrees, sum(PCIP52_degrees) as PCIP52_degrees, sum(PCIP54_degrees) as PCIP54_degrees from majors_data_clean GROUP BY DATAYEAR")
 
-# get just MA data
-majors_data_MA <- filter(majors_data_degrees, STABBR == "MA")
-write_csv(majors_data_MA, path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/majors_data_MA.csv", col_names = TRUE)
+majors_data_nat$PCIP01_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP01_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP03_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP03_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP04_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP04_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP05_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP05_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP09_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP09_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP10_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP10_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP11_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP11_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP12_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP12_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP13_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP13_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP14_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP14_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP15_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP15_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP16_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP16_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP19_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP19_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP22_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP22_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP23_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP23_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP24_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP24_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP25_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP25_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP26_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP26_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP27_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP27_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP29_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP29_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP30_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP30_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP31_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP31_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP38_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP38_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP39_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP39_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP40_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP40_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP41_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP41_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP42_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP42_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP43_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP43_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP44_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP44_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP45_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP45_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP46_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP46_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP47_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP47_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP48_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP48_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP49_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP49_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP50_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP50_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP51_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP51_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP52_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP52_degrees)/(majors_data_nat$UG_approx))*100)
+majors_data_nat$PCIP54_AVG <- with(majors_data_nat, ((majors_data_nat$PCIP54_degrees)/(majors_data_nat$UG_approx))*100)
 
+# save majors_data_nat
+write_csv(majors_data_nat, path = "C:/Users/themi/Documents/Springboard/Foundations of Data Science/data/majors_data_nat.csv)", col_names = TRUE)
 
 	
 # -- 3. COSTT4_A (cost for Title IV aid students) by NUM4_PUB (Title IV students total) and NUM##PUB and NUM##PRIV (breakdown of household income) --

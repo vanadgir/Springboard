@@ -3,11 +3,11 @@ title: "Data Story"
 author: "Varun Nadgir"
 date: "September 6, 2017"
 output:
-  pdf_document: default
   html_document: default
   header-includes:
   - \setlength{\parindent}{4em}
   - \setlength{\parskip}{0em}
+  pdf_document: default
 ---
 
 <style>
@@ -79,17 +79,34 @@ ggplot(sat_adm_data_US_high,
            y = sat_adm_data_US_high$ADM_RATE, 
            col = factor(sat_adm_data_US_high$STABBR))) + 
     geom_point(size = 2) +
-	labs(x = "Avg SAT score", y = "Admission Rate", 
-		title = "Fig. 1.2: Admission Rate by Avg. SAT Score") + 
+    labs(x = "Avg SAT score", y = "Admission Rate", 
+         title = "Fig. 1.2: Admission Rate by Avg. SAT Score") + 
     facet_wrap( ~ sat_adm_data_US_high$DATAYEAR) + 
-	theme(legend.position = "none", 
-		panel.grid.major = element_line(colour = "grey"), 
-		panel.border = element_rect(linetype = "solid", fill = "NA"),
-		strip.background = element_rect(fill = "black"),
-        strip.text = element_text(size = 8, colour = "white")) 
+    theme(legend.position = "none",
+          panel.grid.major = element_line(colour = "grey"), 
+          panel.border = element_rect(linetype = "solid", fill = "NA"),
+          strip.background = element_rect(fill = "black"),
+          strip.text = element_text(size = 8, colour = "white")) 
 ```
 
-  Since the data is much less dense, we can actually make out which states are represented here. It seems like Massachusetts, California, and New York are some of the more recurring data points. This makes sense, since these states are home to, not just one or two, but multiple prestigious schools. The plots also increase in density as time goes on, which seems to indicate that students (and entire schools as a result) are becoming smarter on average. Of course, intelligence is measured by more than just standardized testing, but this is a pretty uplifting result.
+<center>![](high_sat_low_adm.png)</center>
+
+
+  The data is much less dense now, but some of the colours are a little too similar to each other. To know which states are shown here, we can run a summary() on the state abbreviation (STABBR). 
+  
+```{r summary, message=FALSE, warning=FALSE, fig.align="center"}
+# load libraries
+library(readr)
+
+# import data
+sat_adm_data_US_high <- read_csv("~/Springboard/Foundations of Data Science/data/sat_adm_data_US_high.csv")
+
+sat_adm_data_US_high$STABBR = factor(sat_adm_data_US_high$STABBR)
+
+summary(sat_adm_data_US_high$STABBR)
+```
+  
+  It seems like California (Orange Red), Massachusetts (Green), and New York (Navy Blue) are some of the more recurring data points. This makes sense, since these states are home to, not just one or two, but multiple prestigious schools. The plots also increase in density as time goes on, which seems to indicate that students (and entire schools as a result) are becoming smarter on average. Not only that, more Orange Red, Green, and Navy Blue points show up over the years, indicating that more schools from those states are joining the upper ranks. Of course, intelligence is measured by more than just standardized testing, but this is a pretty uplifting result.
 
 ### Majors Plot
 
@@ -131,6 +148,40 @@ ggplot(majors_data_US,
 
   Now we are able to see, approximately, how many students from the collective graduating class of a state get a degree in mathematics. To my disappointment, Maths representation is so low that the Y-scale only goes from 0% to 1.5%. Still, we can see where it tends to be a more popular degree. Places like California, Connecticut, Massachusetts, and Pennsylvania are pretty consistently higher than the other states, while Florida and Arizona sit near the bottom. Vermont has reached the highest, though, and it has been steadily growing (like Rhode Island). Other states like Wyoming, Arkansas, and Montana have had a lot of variation over the years. 
   
+  For reference, we can take a look at the national averages across the years for Maths degrees. To be able to compare easier, we should make the scale of this plot the same as the above plot, so we can see visually which states are above or below the national average.
+  
+```{r maths_nat, message=FALSE, warning=FALSE, fig.align="center", fig.width = 6, fig.height = 4}
+# load libraries
+library(ggplot2)
+library(readr)
+
+# load in dataset
+majors_data_nat <- read_csv("~/Springboard/Foundations of Data Science/data/majors_data_nat.csv")
+
+# national stats for Maths
+ggplot(majors_data_nat, 
+  aes(x = majors_data_nat$DATAYEAR, 
+      y = majors_data_nat$PCIP27_AVG, 
+      fill = majors_data_nat$DATAYEAR)) + 
+  geom_bar(stat = "identity") + 
+  labs(x = "Academic Year (1996-'97 to 2014-'15)",
+       y = "Avg % of Math Degrees Awarded",
+       title = "Fig. 2.2: % of Maths Degrees Awarded Nationally") + 
+  scale_colour_discrete(name = "DataYear") +
+  theme(legend.position = "none", 
+        panel.border = element_rect(linetype = "solid", fill = "NA"),
+        strip.background = element_rect(fill = "black"),
+        strip.text = element_text(size = 8, colour = "white"),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank()) + 
+  geom_text(aes(label = sprintf("%.02f ", majors_data_nat$PCIP27_AVG)), 
+            colour = "black",
+            size = 2.5) + 
+  coord_cartesian(ylim = c(0, 1.5))
+```
+  
+  The national averages range from 0.53% to 0.70%, so any states that consistently award more than ~0.62% could be considered above average. The states we identified earlier - California, Connecticut, Massachusetts, and Pennsylvania - are definitely above average. From this perspective, we can also see that Colorado is slightly above average as well. A lot of states sit near the average, which makes sense, and the states we noticed were low - Arizona and Florida - are quite below average.
+  
   It is also very easy to recreate this plot for another major. To check trends for History degrees, PCIP27 just needs to be changed to PCIP54.
 
 ```{r majorsplot2, message=FALSE, warning=FALSE, fig.align="center", fig.width = 10, fig.height = 7}
@@ -148,7 +199,7 @@ ggplot(majors_data_US,
   geom_bar(stat = "identity") + 
   labs(x = "Academic Year (1996-'97 to 2014-'15)",
        y = "Avg % of History Degrees Awarded",
-       title = "Fig. 2.2: % of History Degrees Awarded by State") + 
+       title = "Fig. 3.1: % of History Degrees Awarded by State") + 
   facet_wrap( ~ STABBR) + 
   scale_colour_discrete(name = "DataYear") +
   theme(legend.position = "none", 
@@ -160,7 +211,41 @@ ggplot(majors_data_US,
 
 ```
 
-  Immediately, the plot can be seen to be quite different. The automatic Y-scale goes up to 3% in this plot, meaning the overall distribution is higher than in the Maths plot. Massachusetts, Vermont, and Connecticut still seem to be higher than others in this plot, and Florida and Arizona are near the bottom again. Does the higher distribution mean History is more popular than Maths? It's possible, but we have to remember that we did use an approximation to plot this.
+  Immediately, the plot can be seen to be quite different. The automatic Y-scale goes up to 3% in this plot, meaning the overall distribution is higher than in the Maths plot. Massachusetts, Vermont, and Connecticut still seem to be higher than others in this plot, and Florida and Arizona are near the bottom again. Let's take a look at the national averages for History too, making sure to match the scale.
+  
+```{r history_nat, message=FALSE, warning=FALSE, fig.align="center", fig.width = 6, fig.height = 4}
+# load libraries
+library(ggplot2)
+library(readr)
+
+# load in dataset
+majors_data_nat <- read_csv("~/Springboard/Foundations of Data Science/data/majors_data_nat.csv")
+
+# national stats for History
+ggplot(majors_data_nat, 
+  aes(x = majors_data_nat$DATAYEAR, 
+      y = majors_data_nat$PCIP54_AVG, 
+      fill = majors_data_nat$DATAYEAR)) + 
+  geom_bar(stat = "identity") + 
+  labs(x = "Academic Year (1996-'97 to 2014-'15)",
+       y = "Avg % of History Degrees Awarded",
+       title = "Fig. 3.2: % of History Degrees Awarded Nationally") + 
+  scale_colour_discrete(name = "DataYear") +
+  theme(legend.position = "none", 
+        panel.border = element_rect(linetype = "solid", fill = "NA"),
+        strip.background = element_rect(fill = "black"),
+        strip.text = element_text(size = 8, colour = "white"),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank()) + 
+  geom_text(aes(label = sprintf("%.02f ", majors_data_nat$PCIP54_AVG)), 
+            colour = "black",
+            size = 2.5) + 
+  coord_cartesian(ylim = c(0, 3))
+```
+  
+  These averages range from 0.96% to 1.25%, so the states that consistently award more than ~1.11% could be considered above average. California does not stick out as much this time around, but Connecticut and Massachusetts definitely do. Even Alaska, Maine, New Hampshire, and Vermont are above average in History. Again, Arizona and Florida are well below average, joined this time by North Dakota, New Mexico, and Nevada.
+  
+  Does the overall higher distribution mean History is more popular than Maths? It's possible, but we have to remember that we did use an approximation to plot this.
 
 ## Conclusion
 

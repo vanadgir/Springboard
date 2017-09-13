@@ -13,6 +13,8 @@ sat_adm_data_US <- read_csv("~/Springboard/Foundations of Data Science/data/sat_
 sat_adm_data_US_high <- read_csv("~/Springboard/Foundations of Data Science/data/sat_adm_data_US_high.csv")
 majors_data_raw <- read_csv("~/Springboard/Foundations of Data Science/data/majors_data_raw.csv")
 majors_data <- read_csv("~/Springboard/Foundations of Data Science/data/majors_data.csv")
+majors_data_US <- read_csv("~/Springboard/Foundations of Data Science/data/majors_data_US.csv")
+majors_data_nat <- read_csv("~/Springboard/Foundations of Data Science/data/majors_data_nat.csv")
 cost_data_raw <- read_csv("~/Springboard/Foundations of Data Science/data/cost_data_raw.csv")
  
 # plot SAT by ADM RATE coloured by REGION faceted by DATAYEAR
@@ -89,17 +91,43 @@ ggplot(majors_data_US,
         axis.text.x = element_blank(),
         axis.ticks.x = element_blank())
 		
-# changes in DEGREES awarded for all majors for a specific STATE over TIME
-ggplot(majors_data_MA, 
-       aes(x = majors_data_MA$variable, 
-           y = majors_data_MA$value, 
-           colour = factor(majors_data_MA$DATAYEAR))) + 
-    geom_bar(stat = "identity") +  
-	labs(x = "Major",
-		 y = "Avg Number of Degrees Awarded",
-		 title = element_text("Massachusetts")) + 
-    theme(legend.position = "none",         
-		panel.border = element_rect(linetype = "solid", fill = "NA"),
+# national level statistics for MATHS and HISTORY over TIME
+# MATHS
+ggplot(majors_data_nat, 
+       aes(x = majors_data_nat$DATAYEAR, 
+           y = majors_data_nat$PCIP27_AVG, 
+           fill = majors_data_nat$DATAYEAR)) + 
+  geom_bar(stat = "identity") + 
+  labs(x = "Academic Year (1996-'97 to 2014-'15)",
+       y = "Avg % of Math Degrees Awarded",
+       title = "Fig. 3.1: % of Maths Degrees Awarded Nationally") + 
+  scale_colour_discrete(name = "DataYear") +
+  theme(legend.position = "none", 
+        panel.border = element_rect(linetype = "solid", fill = "NA"),
         strip.background = element_rect(fill = "black"),
-        strip.text = element_text(size = 8, colour = "black")) + 
-		coord_cartesian(ylim=c(0, 18000))
+        strip.text = element_text(size = 8, colour = "white"),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank()) + 
+    geom_text(aes(label = sprintf("%.02f %%", majors_data_nat$PCIP27_AVG)), 
+              colour = "black",
+              size = 3)
+
+# HISTORY		
+ggplot(majors_data_nat, 
+       aes(x = majors_data_nat$DATAYEAR, 
+           y = majors_data_nat$PCIP54_AVG, 
+           fill = majors_data_nat$DATAYEAR)) + 
+  geom_bar(stat = "identity") + 
+  labs(x = "Academic Year (1996-'97 to 2014-'15)",
+       y = "Avg % of History Degrees Awarded",
+       title = "Fig. 3.1: % of History Degrees Awarded Nationally") + 
+  scale_colour_discrete(name = "DataYear") +
+  theme(legend.position = "none", 
+        panel.border = element_rect(linetype = "solid", fill = "NA"),
+        strip.background = element_rect(fill = "black"),
+        strip.text = element_text(size = 8, colour = "white"),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank()) + 
+    geom_text(aes(label = sprintf("%.02f %%", majors_data_nat$PCIP54_AVG)), 
+              colour = "black",
+              size = 3)
