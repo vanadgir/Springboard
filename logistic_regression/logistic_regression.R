@@ -113,6 +113,14 @@ coef(summary(wrk.out))
 ##   2. Predict the probability of working for each level of marital
 ##      status.
 
+# running unique(NH11$r_maritl) shows us that levels 0 and 3 do not show up in the training set
+unique(NH11$r_maritl)
+
+[1] 5 Divorced                          7 Never married                    
+[3] 4 Widowed                           6 Separated                        
+[5] 1 Married - spouse in household     8 Living with partner              
+[7] 2 Married - spouse not in household <NA>
+
 # Create a dataset with predictors set at desired levels
 # Don't include levels 0 and 3 since they don't show up in training set
 predWork <- with(NH11,
