@@ -42,8 +42,10 @@ wssplot(wine_scale)
 
 #   * Why does this method work? What's the intuition behind it?
 #   * Look at the code for wssplot() and figure out how it works
-#		wssplot() is iterating from 1 to 15 clusters and finding the sum of squares of variance within them. The lower this number is, the more closely grouped the clusters are. 
-#		The biggest improvement for this number is at 3 clusters. Going further would increase computation but does not improve the SS by much per cluster introduced.
+#		wssplot() is iterating from 1 to 15 clusters and finding the sum of squares of variance within them. 
+#		The lower this number is, the more closely grouped the clusters are. 
+#		The biggest improvement for this number is at 3 clusters. 
+#		Going further would increase computation but does not improve the SS by much per cluster introduced.
 
 # Method 2: Use the NbClust library, which runs many experiments
 # and gives a distribution of potential number of clusters.
@@ -97,7 +99,8 @@ type_vector
  1  2  3 
 59 71 48 
 
-#		Seems like a fairly good clustering. The number of predicted types from the k-means clustering algorithm come pretty close to the number of actual types.
+#		Seems like a fairly good clustering. 
+#		The number of predicted types from the k-means clustering algorithm come pretty close to the number of actual types.
 
 # Exercise 6:
 # * Visualize these clusters using  function clusplot() from the cluster library
@@ -105,5 +108,7 @@ type_vector
 
 clusplot(pam(wine_scale, 3))
 
-#		This clustering seems like the best we can get from the available data. Trying k=2 and k=4 gives us too widely distributed clusters or too overlapped clusters, respectively, and k=3 is the best middle ground.
+#		This clustering seems like the best we can get from the available data. 
+#		Trying k=2 and k=4 gives us too widely distributed clusters or too overlapped clusters, respectively, 
+#		and k=3 is the best middle ground.
 #		There is still some overlap, but it is the best case since other k values don't have as much clarity.
