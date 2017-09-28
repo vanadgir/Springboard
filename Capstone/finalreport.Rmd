@@ -46,23 +46,68 @@ For convenience, I began by changing the DATAYEAR column from indicating the yea
 
 From **subdata.csv**, I created a subset of up to 14 columns that I felt would be related to the attendance cost of a school. This included columns like "CONTROL" (whether the school is public or private), "UGDS" (the undergraduate student population), "PFTFAC" (percentage of faculty that are full time), and of course "COSTT4_A" (cost of attendance for a 4-year academic year school). Upon checking the summary() of the training set, I noticed that the MAX of "UGDS" was unnaturally high. This was because there were a few records of the University of Pheonix's online campus, which is capable of having about 200,000 students. Since this was skewing the data, I removed its related "OPEID6" from the training and test sets. I also removed all records in the training set that did not have a "COSTT4_A" entry, since they would not contribute to the model. This filtering had an interesting byproduct - apparently years 2008 and prior did not have "COSTT4_A" records, so removing the NA entries also happened to filter the dataset to years 2009 and beyond. After taking care to turn appropriate columns into the numeric data type, I moved on to make small experimental models.
 
-#### Cost by Undergrad Pop., Average Faculty Salary, and % of Faculty that are Full Time
+The first model I tried was on Cost by Undergrad Pop., Average Faculty Salary, and % of Faculty that are Full-Time. This, however, only gave an $R^2$ of 0.2198, which is not that great. However, the model summary suggests that these three variables are still significant (using asterisk notation), so it is a step in the right direction. The 2nd model I tried used 12 independent variables to model Cost. It gave an $R^2$ of 0.8253, but still showed that three of the variables had little to no significance. After removing these, this was the final model I came to:
 
-```{r costmodel1, message=FALSE, warning=FALSE, fig.align="center"}
+#### Cost by Datayear, Highest degree offered, Pub/Priv, Avg SAT, Undergrad Pop., Avg Faculty Salary, % of Faculty that are Full-Time, Median Debt, and Avg Family Income
+
+```{r costmodel, message=FALSE, warning=FALSE, fig.align="center"}
 # load libraries
 library(readr)
 library(tidyr)
 
 df.train <- read_csv("data/df_train.csv")
-df.test <- read_csv("data/df_test.csv")
 
-mod1 <- lm(COSTT4_A ~ UGDS + AVGFACSAL + PFTFAC, data = df.train, na.action = na.omit)
+cost.mod <- lm(COSTT4_A ~ DATAYEAR + HIGHDEG + CONTROL + SAT_AVG + UGDS + AVGFACSAL + PFTFAC + DEBT_MDN + FAMINC, data = df.train, na.action = na.omit)
 
-summary(mod1)
+summary(cost.mod)
 
 ```
 
+With an $R^2$ of 0.825, this model is almost equally as good as the second model, but now all of the variables used are significant. In other words, the variables that influence the cost of attendance of a school are the ones in this model. This is saved as **cost.mod** and will be used to predict on the test set. Before predicting, however, we should take a look at the plot of this model so that we get some visual context on how good or bad this fit is.
 
+```{r modelsumm, message=FALSE, warning=FALSE, fig.align="center"}
+# load libraries
+library(readr)
+library(tidyr)
+
+df.train <- read_csv("data/df_train.csv")
+
+cost.mod <- lm(COSTT4_A ~ DATAYEAR + HIGHDEG + CONTROL + SAT_AVG + UGDS + AVGFACSAL + PFTFAC + DEBT_MDN + FAMINC, data = df.train, na.action = na.omit)
+
+plot(cost.mod)
+```
+
+The Residuals vs Fitted plot stands out right away, showing that the residuals generally reside around the fitted line. The Normal Q-Q plot also follows the normal line for the most part, aside from the very bottom and very top of the plot. It seems like this model is fairly strong, and the $R^2$ and plot of residuals reinforces it. Now we can make some predictions on the 2014 data and make some comparisons.
+
+```{r costpredict, message=FALSE, warning=FALSE, fig.align="center"}
+# load libraries
+library(readr)
+
+df.test <- read_csv("data/cost_predict.csv")
+
+summary(df.test)
+```
+
+The predict() formula returns a column that I named "PREDICT" and, by taking the difference of "PREDICT" and "COSTT4_A", we can see whether the prediction was too high or too low. This summary tells us that the extreme cases were -\$15,605 and \$26,866 off the mark. What is more disappointing, however, is the number of NAs in the prediction output. To see where the model is falling short, I can check two plots. The first plot overlays the prediction values (in black) over the training data. This helps to see if the predicted values stayed in the same range and may indicate another reason why some predictions weren't made. The second plot overlays the prediction values over the actual 2014 values, and they are coloured green if within $4000 of the actual cost and red if predicted too far. If the plot is mostly green, that would be a good sign.
+
+```{r predictplot1, message=FALSE, warning=FALSE, fig.align="center"}
+# load libraries
+library(readr)
+library(ggplot2)
+
+
+df.test <- read_csv("data/cost_predict.csv")
+
+# plot training set (see costs by ID) and plot the predictions over it (see how the spread looks)
+plot1 <- ggplot(NULL, aes(OPEID6, COSTT4_A)) + geom_point(data = df.train, aes(col = as.factor(REGION))) + geom_point(data = df.test, aes(y = df.test$PREDICT))
+
+# plot predictions over the actual for 2014
+plot2 <- ggplot(NULL) + geom_point(data = df.test, aes(df.test$OPEID6, df.test$COSTT4_A), col = "black") + geom_point(data = df.test, aes(df.test$OPEID6, df.test$PREDICT), col = ifelse(abs(df.test$DIFF) <= 4000, "green", "red")) 
+
+plot1
+plot2
+
+```
 
 ### School Recommendation
 
