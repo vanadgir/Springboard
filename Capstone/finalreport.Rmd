@@ -1,0 +1,72 @@
+---
+title: "The College Scorecard"
+author: "Varun Nadgir"
+date: "September 27, 2017"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+<style>
+body {text-align: justify}
+p {text-indent: 50px}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Capstone Project
+
+### Introduction
+
+The [**College Scorecard**](https://collegescorecard.ed.gov/) is a service meant to help prospective students make their college decision. Whether by comparing size, popular majors, or comparing costs to the national average, the site's goal is to help the user find a good fit. For my Springboard Capstone Project, I used the [**dataset**](https://catalog.data.gov/dataset/college-scorecard) made available by the College Scorecard to try and find additional ways to help users in their decision. 
+
+### The Data
+
+Available in a .zip file from the link above, the data is split into 19 .csv files - one for each academic year from 1996-'97 to 2014-'15. Each file contains 1,744 recorded data points (columns) and about 7,500 schools (rows). My first step was to add a DATAYEAR column to indicate the academic year and then merging the 19 files into one large .csv, which I called **fulldata.csv**. From this 2 GB file, I would create subsets for plotting and studying trends. Next, I had to refer to [**the data dictionary**](https://collegescorecard.ed.gov/data/documentation/) to understand the column names and some of the placeholder values used. Once I merged the files and had a basic understanding of what data was available, I began to create some plots and documented my initial findings in my [**data story**](http://varun.pro/Springboard/DataStory/collegescorecard.html). As a note, my studies have been on US schools only. The dataset includes records of US territories as well, but I have filtered them out when creating subsets for plotting/modeling. 
+
+### Deliverables
+
+My first item will be using linear regression models to determine what variables are the most influential on the cost of a school, and to potentially predict what the cost of a school may be in the future. This would be useful in two ways. It could help students who are on the fence about going to college immediately after high school by suggesting a decline in cost. If a student sees that their ideal school is likely to be cheaper in two years, they may make the decision to find entry-level work or go traveling before going to college. It could also help the schools by indicating areas of their budget that are influencing the cost of attendance. Of course, the goals of each school are different and they may not be interested in reducing cost, but if a school is experiencing a decline in applications, cost of attendance is likely to be something they look at. 
+
+The second item is a recommendation tool that works similarly to clustering methods used by media services such as Netflix, YouTube, and iTunes. Clustering based on things like location, cost, and SAT scores, a student can find options that are close to their top choice. Mentality is a very important part of finding success at school, and feeling out of place in freshman year can be quite discouraging. If their top choice is a far reach school, or it is too expensive/too far, then finding alternatives would hopefully help them to be satisfied in their decision.
+
+My final item will be a basic UI that allows the user to explore the dataset on their own. Although the data will need to be curated and shaved down to a size that a standard internet browser can handle, my hope is that it will provide some transparency between students and universities. As an example, in my [**data story**](http://varun.pro/Springboard/DataStory/collegescorecard.html), I explored SAT averages and admission rates. Even though one could reasonably guess how they are related (higher SAT scores ~ lower admission rates), being able to plot the data and draw a conclusion from a graph is much more convincing. By putting this power in the hands of students and their families, they should be able to make much more educated decisions.
+
+### Data Preparation
+
+From **fulldata.csv**, I created and saved a subset of the columns that would make repeated data manipulation more manageable. I named it **subdata.csv** and it contains various *school identification data* (name, ID, location, level of institution), *admission data* (student demographics, SAT scores), *education data* (majors, completion rates), and *financial data* (cost, aid, debt, repayment). 
+
+From this subset, I can pick the variables for the cost modeling, as well as the variables for clustering - both tools will get specific subsets made so that the data is organized and loading it will be easier in the future. A combination of the original source data and my curated data will go into the UI plotting tool, keeping in mind that the dataset should stay a reasonable size but also have enough depth for the user to gain whatever insights they can.
+
+### Cost Prediction
+
+For convenience, I began by changing the DATAYEAR column from indicating the year range ("1996-'97") to simply having the start year ("1996"). Using the datayear, I created the training file using years 1996 to 2013 and the test file with just the 2014 data. Since the cost is known for 2014, we can compare afterwards to see how good the model is beyond the $R^2$ score alone.
+
+From **subdata.csv**, I created a subset of up to 14 columns that I felt would be related to the attendance cost of a school. This included columns like "CONTROL" (whether the school is public or private), "UGDS" (the undergraduate student population), "PFTFAC" (percentage of faculty that are full time), and of course "COSTT4_A" (cost of attendance for a 4-year academic year school). Upon checking the summary() of the training set, I noticed that the MAX of "UGDS" was unnaturally high. This was because there were a few records of the University of Pheonix's online campus, which is capable of having about 200,000 students. Since this was skewing the data, I removed its related "OPEID6" from the training and test sets. I also removed all records in the training set that did not have a "COSTT4_A" entry, since they would not contribute to the model. This filtering had an interesting byproduct - apparently years 2008 and prior did not have "COSTT4_A" records, so removing the NA entries also happened to filter the dataset to years 2009 and beyond. After taking care to turn appropriate columns into the numeric data type, I moved on to make small experimental models.
+
+#### Cost by Undergrad Pop., Average Faculty Salary, and % of Faculty that are Full Time
+
+```{r costmodel1, message=FALSE, warning=FALSE, fig.align="center"}
+# load libraries
+library(readr)
+library(tidyr)
+
+df.train <- read_csv("data/df_train.csv")
+df.test <- read_csv("data/df_test.csv")
+
+mod1 <- lm(COSTT4_A ~ UGDS + AVGFACSAL + PFTFAC, data = df.train, na.action = na.omit)
+
+summary(mod1)
+
+```
+
+
+
+### School Recommendation
+
+
+
+### College Scorecard Sandbox
+
