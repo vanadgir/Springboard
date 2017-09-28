@@ -65,6 +65,8 @@ summary(cost.mod)
 
 With an $R^2$ of 0.825, this model is almost equally as good as the second model, but now all of the variables used are significant. In other words, the variables that influence the cost of attendance of a school are the ones in this model. This is saved as **cost.mod** and will be used to predict on the test set. Before predicting, however, we should take a look at the plot of this model so that we get some visual context on how good or bad this fit is.
 
+#### Plot of cost.mod
+
 ```{r modelsumm, message=FALSE, warning=FALSE, fig.align="center"}
 # load libraries
 library(readr)
@@ -78,6 +80,8 @@ plot(cost.mod)
 ```
 
 The Residuals vs Fitted plot stands out right away, showing that the residuals generally reside around the fitted line. The Normal Q-Q plot also follows the normal line for the most part, aside from the very bottom and very top of the plot. It seems like this model is fairly strong, and the $R^2$ and plot of residuals reinforces it. Now we can make some predictions on the 2014 data and make some comparisons.
+
+#### Summary of test data after predictions
 
 ```{r costpredict, message=FALSE, warning=FALSE, fig.align="center"}
 # load libraries
@@ -99,15 +103,75 @@ library(ggplot2)
 df.test <- read_csv("data/cost_predict.csv")
 
 # plot training set (see costs by ID) and plot the predictions over it (see how the spread looks)
-plot1 <- ggplot(NULL, aes(OPEID6, COSTT4_A)) + geom_point(data = df.train, aes(col = as.factor(REGION))) + geom_point(data = df.test, aes(y = df.test$PREDICT))
+plot1 <- ggplot(NULL, aes(OPEID6, COSTT4_A)) + 
+  geom_point(data = df.train, aes(col = as.factor(REGION))) + 
+  geom_point(data = df.test, aes(y = df.test$PREDICT)) +
+  labs(x = "OPEID6", y = "COSTT4_A", 
+       title = "Prediction (Black) vs. Training (Coloured)") + 
+  scale_colour_discrete(name = "Region", 
+                        labels = c("US Service Schools", "New England", "Mid East", "Great Lakes", "Plains", "Southeast", "Southwest", "Rocky Mountains", "Far West", "Outlying Areas"))
 
 # plot predictions over the actual for 2014
-plot2 <- ggplot(NULL) + geom_point(data = df.test, aes(df.test$OPEID6, df.test$COSTT4_A), col = "black") + geom_point(data = df.test, aes(df.test$OPEID6, df.test$PREDICT), col = ifelse(abs(df.test$DIFF) <= 4000, "green", "red")) 
+plot2 <- ggplot(NULL) + 
+  geom_point(data = df.test, aes(df.test$OPEID6, df.test$COSTT4_A), 
+             col = "black") + 
+  geom_point(data = df.test, aes(df.test$OPEID6, df.test$PREDICT), 
+             col = ifelse(abs(df.test$DIFF) <= 4000, "green", "red")) +
+  labs(x = "OPEID6", y = "COSTT4_A",
+       title = "Prediction (Red/Green) vs. Actual (Black)")
 
 plot1
 plot2
 
 ```
+
+According to these plots, the predictions were mostly succesful for schools in the 0 ~ 3000 range for "OPEID6", while predictions beyond that are very sporadic. Looking at the dataset and sorting by "OPEID6" shows that there are many NAs in the independent variables, causing the prediction to fail for those cases. This is unfortunate, since this causes about 2,600 failed predictions despite a fairly strong model. This leaves us with a few different options. We could remove the independent variable(s) with the most NAs from the model, which risks weakening the model but will yield more successful predictions. Another option could be to replace NAs with another value, such as the mean for that column. This doesn't hurt the model at all, but the predictions for the schools with approximated values have a chance to be completely off.
+
+The independent variable with significantly more NAs than the others is "SAT_AVG". We can create a new model that does not include "SAT_AVG" and, it turns out, removing it reveals "PFTFAC" to be an insignificant variable as well. With both removed, the new model has an $R^2$ of 0.771, which is not bad at all. Checking the summary of this new model shows that there are only about 400 NAs in the prediction this time, which is a massive improvement. 
+
+```{r temptest, message=FALSE, warning=FALSE, fig.align="center"}
+# load libraries
+library(readr)
+library(tidyr)
+
+df.train <- read_csv("data/df_train.csv")
+
+mod1 <- lm(COSTT4_A ~ DATAYEAR + HIGHDEG + CONTROL + UGDS + AVGFACSAL + DEBT_MDN + FAMINC, data = df.train, na.action = na.omit)
+
+summary(mod1)
+```
+
+We can compare the performance of this model to the other option, where NAs would have been replaced by the column mean. Is it worth it to have a slightly weaker model for more accurate predictions, or will replacing the NAs solve the problem? Ideally, the colour coding of the plot will indicate the better model.
+
+```{r comparemod, message=FALSE, warning=FALSE, fig.align="center"}
+# load libraries
+library(readr)
+library(ggplot2)
+
+temp.test <- read_csv("data/temp_test.csv")
+df.test.approx <- read_csv("data/cost_predict_approx.csv")
+
+# plot temp predictions over the actual for 2014
+ggplot(NULL) + 
+  geom_point(data = temp.test, aes(temp.test$OPEID6, temp.test$COSTT4_A), 
+             col = "black") + 
+  geom_point(data = temp.test, aes(temp.test$OPEID6, temp.test$PREDICT), 
+             col = ifelse(abs(temp.test$DIFF) <= 4000, "green", "red")) +
+  labs(x = "OPEID6", y = "COSTT4_A",
+       title = "Weaker Model, Fewer NAs")
+
+# plot temp predictions over the actual for 2014
+ggplot(NULL) + 
+  geom_point(data = df.test.approx, aes(df.test.approx$OPEID6, df.test.approx$COSTT4_A), 
+             col = "black") + 
+  geom_point(data = df.test.approx, aes(df.test.approx$OPEID6, df.test.approx$PREDICT), 
+             col = ifelse(abs(df.test.approx$DIFF) <= 4000, "green", "red")) +
+  labs(x = "OPEID6", y = "COSTT4_A",
+       title = "Original Model, NAs replaced")
+
+```
+
+
 
 ### School Recommendation
 
