@@ -228,6 +228,7 @@ as.vector(tapply(clustdata$rural_remote, clusterGroups, mean))
 
 # add cluster column to the dataset copy from earlier
 schoolCluster2014$CLUSTER <- clusterGroups
+write_csv(schoolCluster2014, "schoolCluster2014.csv")
 
 # see number of records in each cluster			
 table(schoolCluster2014$CLUSTER)
@@ -235,7 +236,7 @@ table(schoolCluster2014$CLUSTER)
 1285  596  297  374  997  796 2032 1165 
 
 # example: I am interested in Drexel University
-View(subset(schoolCluster2014, INSTNM == "Drexel University"))
+subset(schoolCluster2014$CLUSTER, schoolCluster2014$INSTNM == "Drexel University")
 # it is cluster 4 (Non Prof, Mid Pop, High Cost (A), High Fam Inc, Low 20s, Large City / Suburb)
 
 # take a look at all cluster 4

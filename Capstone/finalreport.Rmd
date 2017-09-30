@@ -3,8 +3,8 @@ title: "The College Scorecard"
 author: "Varun Nadgir"
 date: "September 27, 2017"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 <style>
@@ -16,17 +16,17 @@ p {text-indent: 50px}
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-## Capstone Project
+## **Capstone Project**
 
-### Introduction
+### **Introduction**
 
 The [**College Scorecard**](https://collegescorecard.ed.gov/) is a service meant to help prospective students make their college decision. Whether by comparing size, popular majors, or comparing costs to the national average, the site's goal is to help the user find a good fit. For my Springboard Capstone Project, I used the [**dataset**](https://catalog.data.gov/dataset/college-scorecard) made available by the College Scorecard to try and find additional ways to help users in their decision. 
 
-### The Data
+### **The Data**
 
 Available in a .zip file from the link above, the data is split into 19 .csv files - one for each academic year from 1996-'97 to 2014-'15. Each file contains 1,744 recorded data points (columns) and about 7,500 schools (rows). My first step was to add a DATAYEAR column to indicate the academic year and then merging the 19 files into one large .csv, which I called **fulldata.csv**. From this 2 GB file, I would create subsets for plotting and studying trends. Next, I had to refer to [**the data dictionary**](https://collegescorecard.ed.gov/data/documentation/) to understand the column names and some of the placeholder values used. Once I merged the files and had a basic understanding of what data was available, I began to create some plots and documented my initial findings in my [**data story**](http://varun.pro/Springboard/DataStory/collegescorecard.html). As a note, my studies have been on US schools only. The dataset includes records of US territories as well, but I have filtered them out when creating subsets for plotting/modeling. 
 
-### Deliverables
+### **Deliverables**
 
 My first item will be using linear regression models to determine what variables are the most influential on the cost of a school, and to potentially predict what the cost of a school may be in the future. This would be useful in two ways. It could help students who are on the fence about going to college immediately after high school by suggesting a decline in cost. If a student sees that their ideal school is likely to be cheaper in two years, they may make the decision to find entry-level work or go traveling before going to college. It could also help the schools by indicating areas of their budget that are influencing the cost of attendance. Of course, the goals of each school are different and they may not be interested in reducing cost, but if a school is experiencing a decline in applications, cost of attendance is likely to be something they look at. 
 
@@ -34,26 +34,25 @@ The second item is a recommendation tool that works similarly to clustering meth
 
 My final item will be a basic UI that allows the user to explore the dataset on their own. Although the data will need to be curated and shaved down to a size that a standard internet browser can handle, my hope is that it will provide some transparency between students and universities. As an example, in my [**data story**](http://varun.pro/Springboard/DataStory/collegescorecard.html), I explored SAT averages and admission rates. Even though one could reasonably guess how they are related (higher SAT scores ~ lower admission rates), being able to plot the data and draw a conclusion from a graph is much more convincing. By putting this power in the hands of students and their families, they should be able to make much more educated decisions.
 
-### Data Preparation
+### **Data Preparation**
 
-From **fulldata.csv**, I created and saved a subset of the columns that would make repeated data manipulation more manageable. I named it **subdata.csv** and it contains various *school identification data* (name, ID, location, level of institution), *admission data* (student demographics, SAT scores), *education data* (majors, completion rates), and *financial data* (cost, aid, debt, repayment). 
+From **fulldata.csv**, I created and saved a subset of the columns that would make repeated data manipulation more manageable. I named it **subdata** and it contains various *school identification data* (name, ID, location, level of institution), *admission data* (student demographics, SAT scores), *education data* (majors, completion rates), and *financial data* (cost, aid, debt, repayment). 
 
 From this subset, I can pick the variables for the cost modeling, as well as the variables for clustering - both tools will get specific subsets made so that the data is organized and loading it will be easier in the future. A combination of the original source data and my curated data will go into the UI plotting tool, keeping in mind that the dataset should stay a reasonable size but also have enough depth for the user to gain whatever insights they can.
 
-### Cost Prediction
+### **Cost Prediction**
 
 For convenience, I began by changing the DATAYEAR column from indicating the year range ("1996-'97") to simply having the start year ("1996"). Using the datayear, I created the training file using years 1996 to 2013 and the test file with just the 2014 data. Since the cost is known for 2014, we can compare afterwards to see how good the model is beyond the $R^2$ score alone.
 
-From **subdata.csv**, I created a subset of up to 14 columns that I felt would be related to the attendance cost of a school. This included columns like "CONTROL" (whether the school is public or private), "UGDS" (the undergraduate student population), "PFTFAC" (percentage of faculty that are full time), and of course "COSTT4_A" (cost of attendance for a 4-year academic year school). Upon checking the summary() of the training set, I noticed that the MAX of "UGDS" was unnaturally high. This was because there were a few records of the University of Pheonix's online campus, which is capable of having about 200,000 students. Since this was skewing the data, I removed its related "OPEID6" from the training and test sets. I also removed all records in the training set that did not have a "COSTT4_A" entry, since they would not contribute to the model. This filtering had an interesting byproduct - apparently years 2008 and prior did not have "COSTT4_A" records, so removing the NA entries also happened to filter the dataset to years 2009 and beyond. After taking care to turn appropriate columns into the numeric data type, I moved on to make small experimental models.
+From **subdata**, I created a subset of up to 14 columns that I felt would be related to the attendance cost of a school. This included columns like "CONTROL" (whether the school is public or private), "UGDS" (the undergraduate student population), "PFTFAC" (percentage of faculty that are full time), and of course "COSTT4_A" (cost of attendance for a 4-year academic year school). Upon checking the summary() of the training set, I noticed that the MAX of "UGDS" was unnaturally high. This was because there were a few records of the University of Pheonix's online campus, which is capable of having about 200,000 students. Since this was skewing the data, I removed its related "OPEID6" from the training and test sets. I also removed all records in the training set that did not have a "COSTT4_A" entry, since they would not contribute to the model. This filtering had an interesting byproduct - apparently years 2008 and prior did not have "COSTT4_A" records, so removing the NA entries also happened to filter the dataset to years 2009 and beyond. After taking care to turn appropriate columns into the numeric data type, I moved on to make small experimental models.
 
 The first model I tried was on Cost by Undergrad Pop., Average Faculty Salary, and % of Faculty that are Full-Time. This, however, only gave an $R^2$ of 0.2198, which is not that great. However, the model summary suggests that these three variables are still significant (using asterisk notation), so it is a step in the right direction. The 2nd model I tried used 12 independent variables to model Cost. It gave an $R^2$ of 0.8253, but still showed that three of the variables had little to no significance. After removing these, this was the final model I came to:
 
-#### Cost by Datayear, Highest degree offered, Pub/Priv, Avg SAT, Undergrad Pop., Avg Faculty Salary, % of Faculty that are Full-Time, Median Debt, and Avg Family Income
+#### *Cost by Datayear, Highest degree offered, Pub/Priv, Avg SAT, Undergrad Pop., Avg Faculty Salary, % of Faculty that are Full-Time, Median Debt, and Avg Family Income*
 
 ```{r costmodel, message=FALSE, warning=FALSE, fig.align="center"}
 # load libraries
 library(readr)
-library(tidyr)
 
 df.train <- read_csv("data/df_train.csv")
 
@@ -63,25 +62,9 @@ summary(cost.mod)
 
 ```
 
-With an $R^2$ of 0.825, this model is almost equally as good as the second model, but now all of the variables used are significant. In other words, the variables that influence the cost of attendance of a school are the ones in this model. This is saved as **cost.mod** and will be used to predict on the test set. Before predicting, however, we should take a look at the plot of this model so that we get some visual context on how good or bad this fit is.
+With an $R^2$ of 0.825, this model is almost equally as good as the second model, but now all of the variables used are significant. In other words, the variables that likely have the most influence on the cost of attendance of a school are the ones in this model. This is saved as **cost.mod** and will be used to predict on the test set.
 
-#### Plot of cost.mod
-
-```{r modelsumm, message=FALSE, warning=FALSE, fig.align="center"}
-# load libraries
-library(readr)
-library(tidyr)
-
-df.train <- read_csv("data/df_train.csv")
-
-cost.mod <- lm(COSTT4_A ~ DATAYEAR + HIGHDEG + CONTROL + SAT_AVG + UGDS + AVGFACSAL + PFTFAC + DEBT_MDN + FAMINC, data = df.train, na.action = na.omit)
-
-plot(cost.mod)
-```
-
-The Residuals vs Fitted plot stands out right away, showing that the residuals generally reside around the fitted line. The Normal Q-Q plot also follows the normal line for the most part, aside from the very bottom and very top of the plot. It seems like this model is fairly strong, and the $R^2$ and plot of residuals reinforces it. Now we can make some predictions on the 2014 data and make some comparisons.
-
-#### Summary of test data after predictions
+#### *Summary of test data after predictions*
 
 ```{r costpredict, message=FALSE, warning=FALSE, fig.align="center"}
 # load libraries
@@ -171,11 +154,111 @@ ggplot(NULL) +
 
 ```
 
+It truly looks as though the weaker model with a few NAs remaining is the better one for prediction. The amount of red in the NA-replacement model shows that many predictions were quite off and that forcing the model to make predictions when there was not enough data was the wrong decision. Giving up the two variables and using a slightly weaker model, while keeping the original data, seems to stay within the range of the actual 2014 data for the most part. 
 
+If we plot this new model, we can also use the residuals to judge how well it works.  
 
-### School Recommendation
+```{r modelsumm, message=FALSE, warning=FALSE, fig.align="center"}
+# load libraries
+library(readr)
 
+df.train <- read_csv("data/df_train.csv")
 
+cost.mod2 <- lm(COSTT4_A ~ DATAYEAR + HIGHDEG + CONTROL + UGDS + AVGFACSAL + DEBT_MDN + FAMINC, data = df.train, na.action = na.omit)
+
+plot(cost.mod2)
+```
+
+The Residuals vs Fitted plot stands out right away, showing that the residuals generally reside around the fitted line. The Normal Q-Q plot also follows the normal line for the most part, aside from the very bottom and very top of the plot. It seems like this model is fairly strong, and the $R^2$ and plot of residuals reinforces it.
+
+After revisions, the current conclusion is that Cost is strongly related to the school's highest provided degree, whether it is public or private, the student population size, the average faculty salary, the median student debt, and the average family income. It is unlikely that the school will change between public/private, or that it will stop providing higher degrees, but there is a chance that the school might look into its admission rates. According to the coefficients table, "UGDS" is negatively correlated to "COSTT4_A", which means that school prices go up as student population sizes go down; i.e., fewer people go to the more expensive schools, and the schools that accept the most students can afford to have slightly lower attendance costs since they make it back through sheer numbers. 
+
+It should also be mentioned that the $4,000 "acceptable" window I applied to the prediction values was chosen arbitrarily. This window could change depending on the student's budget - someone who is more well-off could widen the window and someone with a tighter budget could shrink it. Despite removing some of the variables that made what seemed to be a stronger model, the final model we reached seems rather good at predicting cost when all data points are present.
+
+### **School Recommendation**
+
+From **subdata**, I created another subset for clustering. Since the plan is to have a way to recommend schools to a student, I filtered down to just the school data from 2014 (meaning the 2014-'15 school year). Since this is the most recent year of data available in the dataset, it felt the most appropriate to use when trying to classify them. With some trial and error, I eventually decided on 9 variables to use, aside from the school name column. At this point, I made two subsets - **clustdata** for performing data manipulation, and a copy called **schoolCluster2014** which would remain as is until the end when we have clusters to assign. 
+
+Proper data cleaning was important here, since calculating Euclidean distance is the first step to building the clustering model. I needed to scale() the numeric variables, so that variables with different ranges do not skew the model. However, before scaling, there were a few changes I had to make to the data. 
+
+For population size, family income, and age of entry, I replaced NAs with the mean of the column. The two cost columns were different - one column shows the cost of academic year schools and the other is for program year schools, meaning if one column had an entry, the other would be NA. In this case, it wouldn't make sense to replace NAs with the mean, so I replaced them with 0 instead. With the NAs filled, we can run scale(clustdata[2:6]), where the 2nd to 6th columns are the numeric variables. After handling the NA values, I also had to check the mean() and sd() so I could note them down. I kept these in a spreadsheet for later, since I will need them to change the scaled values back to ones we can make sense of for analysis.
+
+I also transformed the categorical variables into their own binary columns - instead of checking the row for the value in the cell, the value is in the column name and the cell is a 1 or 0. This meant adding 51 columns for the states and DC, 3 columns for public or private (for-profit and non-profit), and 12 columns for different locale types (city, town, etc). After adding the new binary columns, the original columns were removed. 
+
+After these changes, we can run dist(clustdata[2:72]) to get the Euclidean distances for the schools. With the distances, we can then create a cluster object, which can be used to plot a dendrogram. This will give us an idea of how many clusters we should create from the dataset.
+
+```{r dendrogram, message=FALSE, warning=FALSE, fig.align="center"}
+# load libraries
+library(readr)
+library(cluster)
+
+clustdata <- read_csv("data/clustdata.csv")
+clustdata[2:6] <- scale(clustdata[2:6])
+distances <- dist(clustdata[2:72], method = "euclidean")
+clusterSchools <- hclust(distances, method = "ward.D")
+
+# create dendrogram
+plot(clusterSchools)
+# there is a spot where horizontal line rule gives us 8 clusters
+rect.hclust(clusterSchools, k = 8)
+```
+
+Using a horizontal line, we can cut the dendrogram to help us decide how many clusters to use. If we cut higher up, we would not have enough clusters to give meaningful recommendations. The red boxes here show a spot that crosses the dendrogram 8 times.
+
+The next step involved a little bit of manual work outside of R. I used tapply() to find the mean occurrences for the variables in each cluster, copy/pasted the values into a text editor, and made a .csv manually. This file will show us what values are most common in the cluster, allowing us to come up with classifications. For the numeric variables, the value here will tell us the mean (of the scaled value) in that cluster - for example, telling us the mean cost is high or the mean population is low. And the binary columns will just be $\frac{N}{7542}$, where N is the number of "1" values and 7542 is the number of schools - this gives us an easy percent. 
+
+#### *Cluster Means*
+
+```{r makecsv, message=FALSE, warning=FALSE, fig.align="center"}
+# load library
+library(readr)
+
+clustermeans <- read_csv("data/clustermeans.csv")
+
+clustermeans
+```
+
+Since the first five rows are still scaled, it is hard to make classifications without context. That is why I kept the mean() and sd() of the unscaled values beforehand. To convert back, we just use 
+
+$$ x = (sd\times z) + m $$
+
+Now we can understand the numeric values since they are in their original units. Using Google Sheets, I did some colour coding to see which values here stood out. Some clusters are a bit more distinct than others, but 8 seems to have been a good choice. Yellow cells are close to the original mean(), green cells are above, and red cells are below. Although the colouring is a bit arbitrary from my end, the values are fortunately different enough to make unique clusters. I also checked the count of each of the clusters to see how many schools were placed into them, which could also help determine if the classifications we decide on make sense.
+
+<center>![](classifyclusters.PNG)</center>
+
+```{r clustertable, message=FALSE, warning=FALSE, fig.align="center"}
+clusterSchools <- hclust(distances, method = "ward.D")
+clusterGroups <- cutree(clusterSchools, k = 8)
+table(clusterGroups)
+```
+
+Based on all of these factors, I came up with the following classifications:
+
+1 - Pub, Mid Pop, Mid Cost (A), Mid Fam Inc, Mid 20s, Varying Locales
+2 - Non Prof, Low Pop, Mid Cost (A), Mid Fam Inc, Mid 20s, Large City / Suburb
+3 - Pub, High Pop, Mid Cost (A), High Fam Inc, Low 20s, Large City / Suburb
+4 - Non Prof, Mid Pop, High Cost (A), High Fam Inc, Low 20s, Large City / Suburb
+5 - Non Prof, Low Pop, High Cost (A), High Fam Inc, Low 20s, Large City / Suburb
+6 - For Prof, Low Pop, High Cost (A), Low Fam Inc, Upper 20s, Large City / Suburb
+7 - For Prof, Low Pop, High Cost (P), Low Fam Inc, Mid 20s, Large City / Suburb
+8 - Pub / For Prof, Low Pop, Mid Cost (P), Low Fam Inc, Upper 20s, Large City / Suburb
+
+There are some interesting take-aways from this already. It is pretty unsurprising that the majority of public schools are in cluster 1, where student population, cost, and family income are all around average, and cluster 7, where students are joining for-profit schools to try and gain new skills in their mid-20s since their incomes are on the lower side. Cluster 1 is also not dominated by any one locale, though the most are small towns or cities. Clusters 3, 4, and 5 also seem to indicate that the students going to schools in large locales are younger, have higher family incomes than the others, but still have different preferences on population and cost of their school.
+
+Finally, we can append the clusters to the end of the original data. Earlier in the process I made a table called **schoolCluster2014**, to which I can now assign clusters. Now if a student has a school in mind, for example "Drexel University", they can do a lookup for that school and see what cluster it is in. In this case, Drexel is in cluster 4.
+
+#### *Cluster 4*
+
+```{r clust4, message=FALSE, warning=FALSE, fig.align="center"}
+# load library
+library(readr)
+
+schoolCluster2014 <- read_csv("data/schoolcluster2014.csv")
+
+subset(schoolCluster2014, CLUSTER == 4)
+```
+
+With an interactive UI, a student could now sort by population, cost, and compare schools based on their own preferences and needs. This brings us to the next and final tool.
 
 ### College Scorecard Sandbox
 
