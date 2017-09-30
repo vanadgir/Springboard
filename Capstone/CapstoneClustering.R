@@ -1,9 +1,10 @@
 # load libraries
 library(dplyr)
 library(tidyr)
-library(ggplot2)
 library(readr)
 library(cluster)
+library(FastKNN)
+library(data.table)
 
 # load subdata (prepared previously for regression) 
 subdata_US <- read_csv("data/subdata_US.csv")
@@ -235,9 +236,34 @@ table(schoolCluster2014$CLUSTER)
    1    2    3    4    5    6    7    8 
 1285  596  297  374  997  796 2032 1165 
 
-# example: I am interested in Drexel University
-subset(schoolCluster2014$CLUSTER, schoolCluster2014$INSTNM == "Drexel University")
-# it is cluster 4 (Non Prof, Mid Pop, High Cost (A), High Fam Inc, Low 20s, Large City / Suburb)
+# compute nearest neighbor matrix
+distmat <- as.matrix(distances)
 
-# take a look at all cluster 4
-View(subset(schoolCluster2014, CLUSTER == 4))
+# create empty matrix, 7542 for num of records, 10 for num of neighbors 
+nn <- matrix(0,7542,10)
+
+# loop through distance matrix and assign neighbors to nn 
+for (i in 1:7542){
+	nn[i,] = k.nearest.neighbors(i, distmat, k = 10)
+}
+
+# coerce to data frame
+nn <- as.data.frame(nn)
+
+# save copy
+write_csv(nn, "data/nn.csv")
+
+# add row names as a column
+schoolCluster2014 <- data.table(schoolCluster2014, keep.rownames = TRUE)
+
+# save copy with rn column
+write_csv(schoolCluster2014, "data/schoolCluster2014.csv")
+
+# example: I am interested in Drexel University, this will return rn = 3214
+rn <- as.numeric(schoolCluster2014[schoolCluster2014$INSTNM == "Drexel University", "rn"])
+
+# get row names for 10 nearest neighbors from nn matrix
+rn.nn <- nn[rn,]
+
+# get the INSTNM for those 10 row names, confirm that they are also cluster 4
+subset(schoolCluster2014[c("INSTNM", "CLUSTER")], schoolCluster2014$rn %in% rn.nn)

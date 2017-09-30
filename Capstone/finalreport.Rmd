@@ -3,8 +3,8 @@ title: "The College Scorecard"
 author: "Varun Nadgir"
 date: "September 27, 2017"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 <style>
@@ -245,20 +245,25 @@ Based on all of these factors, I came up with the following classifications:
 
 There are some interesting take-aways from this already. It is pretty unsurprising that the majority of public schools are in cluster 1, where student population, cost, and family income are all around average, and cluster 7, where students are joining for-profit schools to try and gain new skills in their mid-20s since their incomes are on the lower side. Cluster 1 is also not dominated by any one locale, though the most are small towns or cities. Clusters 3, 4, and 5 also seem to indicate that the students going to schools in large locales are younger, have higher family incomes than the others, but still have different preferences on population and cost of their school.
 
-Finally, we can append the clusters to the end of the original data. Earlier in the process I made a table called **schoolCluster2014**, to which I can now assign clusters. Now if a student has a school in mind, for example "Drexel University", they can do a lookup for that school and see what cluster it is in. In this case, Drexel is in cluster 4.
+Finally, we can append the clusters to the end of the original data. Earlier in the process I made a table called **schoolCluster2014**, to which I can now assign clusters. Now if a student has a school in mind, for example "Drexel University", they can do a lookup for that school and see what cluster it is in and what its row number is. For Drexel, the row number is 3214 and it is in cluster 4. This row number can be used to do a lookup in a nearest neighbor matrix, which can show us the nearest 10 row names. 
 
-#### *Cluster 4*
+#### *Drexel University's Nearest Neighbors*
 
 ```{r clust4, message=FALSE, warning=FALSE, fig.align="center"}
 # load library
 library(readr)
 
 schoolCluster2014 <- read_csv("data/schoolcluster2014.csv")
+nn <- read_csv("data/nn.csv")
+rn <- as.numeric(schoolCluster2014[schoolCluster2014$INSTNM == "Drexel University", "rn"])
 
-subset(schoolCluster2014, CLUSTER == 4)
+rn.nn <- nn[rn,]
+
+subset(schoolCluster2014[c("INSTNM", "CLUSTER")], schoolCluster2014$rn %in% rn.nn)
+
 ```
 
-With an interactive UI, a student could now sort by population, cost, and compare schools based on their own preferences and needs. This brings us to the next and final tool.
+Just from the names alone and the little that I know about some of those schools, we can see that they are all big schools in big cities, just like Drexel University. Additionally, with an interactive UI, a student could simply take a look at all of cluster 4 and sort by population, cost, and compare schools based on their own preferences and needs. This brings us to the next and final tool.
 
 ### **College Scorecard Sandbox**
 
@@ -274,8 +279,8 @@ From 19 individual .csv files, to one large 2 GB file, to dozens of smaller data
 
 Linear regression showed us that a school's cost of attendance is linked to the its highest provided degree, whether it is public or private, the student population size, the average faculty salary, the median student debt, and the average family income. While it may not be possible or reasonable for a school to make changes for some of these factors, but how many students they accept and how much aid they are willing to give are both areas they could look into if they are willing. Students can also use this model to see if it is worth waiting a year to go to college, in case their top choice seems like it will drop in cost by then.
 
-Clustering gave us a unique look at the spread of characteristics across the schools in 2014. With 8 uniquely defined clusters, finding similar schools is now an easy task. By looking at the table and filtering by cluster, a student can sort that cluster by cost, size, and locale to see other schools that fit their preference(s). Students with far reach schools could benefit from this by having backups that they would still be satisfied with attending, since they would be so similar. Even students without a particular school in mind could get some ideas on where to apply, as long as they have some preferences on the characteristics of the schools. 
+Clustering gave us a unique look at the spread of characteristics across the schools in 2014. With 8 uniquely defined clusters, finding similar schools is now an easy task. Students with far reach schools could benefit from this by having backups that they would still be satisfied with attending, since they would be so similar. Even students without a particular school in mind could get some ideas on where to apply, as long as they have some preferences on the characteristics of the schools. Those students could just search and sort through the cluster that matches the type of school they are interested in.
 
 And lastly, I've provided an interactive UI that will help give students and their families the analytical tools they need to answer their own questions and try to learn more. The UI has an area to make custom plots out of a huge selection of variables, kept to a reasonable size since it is stored on a server, and also has the ability to filter and sort through the cluster data.
 
-If you have any questions, or you would like to see more detail in how I prepared the data and plots, you can refer to the [**appendix**](http://varun.pro/Springboard/Capstone/finalappendix.html). Or if you are interested in helping me improve our understanding of higher education and how to help students find a path to success, please feel free to [**email me**](mailto:vanadgir@gmail.com). Thank you very much for reading.
+If you have any questions, or you would like to see more detail in how I prepared the data and plots, you can refer to the [**appendix**](http://varun.pro/Springboard/Capstone/finalappendix.html). Or if you are interested in helping me improve our understanding of higher education and how to help students find a path to success, please feel free to [**email me**](mailto:vanadgir@gmail.com). Many thanks to The College Scorecard for making this data available, and thank you very much for reading.
