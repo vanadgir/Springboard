@@ -23,6 +23,9 @@ clustdata <- filter(clustdata, DATAYEAR == "2014")
 clustdata$OPEID6 = NULL
 clustdata$DATAYEAR = NULL 
 
+# make a copy for use later (do this before transforming data)
+schoolCluster2014 <- clustdata
+
 ## -- Transform categorical data into binary columns -- ##
 # create binary columns for STABBR
 clustdata$state_AK <- ifelse(clustdata$STABBR == "AK", 1, 0) 
@@ -223,20 +226,17 @@ as.vector(tapply(clustdata$rural_remote, clusterGroups, mean))
 # 7 (2032) - For Prof, Low Pop, High Cost (P), Low Fam Inc, Mid 20s, Large City / Suburb				
 # 8 (1165) - Pub / For Prof, Low Pop, Mid Cost (P), Low Fam Inc, Upper 20s, Large City / Suburb	
 
-# add CLUSTER column to data table
-clustdata$CLUSTER <- clusterGroups
-
-# create new table with INSTNM, UGDS, COST, FAMINC, AGE_ENTRY
-schoolClust <- select(clustdatafull, one_of(c("INSTNM", "CLUSTER")))
+# add cluster column to the dataset copy from earlier
+schoolCluster2014$CLUSTER <- clusterGroups
 
 # see number of records in each cluster			
-table(schoolClust$CLUSTER)
+table(schoolCluster2014$CLUSTER)
    1    2    3    4    5    6    7    8 
 1285  596  297  374  997  796 2032 1165 
 
 # example: I am interested in Drexel University
-View(subset(schoolClust, INSTNM == "Drexel University"))
+View(subset(schoolCluster2014, INSTNM == "Drexel University"))
 # it is cluster 4 (Non Prof, Mid Pop, High Cost (A), High Fam Inc, Low 20s, Large City / Suburb)
 
 # take a look at all cluster 4
-View(subset(schoolClust, CLUSTER == 4))
+View(subset(schoolCluster2014, CLUSTER == 4))
