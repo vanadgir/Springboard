@@ -307,7 +307,16 @@ p {text-indent: 50px}
 ##    1    2    3    4    5    6    7    8 
 ## 1285  596  297  374  997  796 2032 1165</code></pre>
 <p>Based on all of these factors, I came up with the following classifications:</p>
-<p>1 - Pub, Mid Pop, Mid Cost (A), Mid Fam Inc, Mid 20s, Varying Locales 2 - Non Prof, Low Pop, Mid Cost (A), Mid Fam Inc, Mid 20s, Large City / Suburb 3 - Pub, High Pop, Mid Cost (A), High Fam Inc, Low 20s, Large City / Suburb 4 - Non Prof, Mid Pop, High Cost (A), High Fam Inc, Low 20s, Large City / Suburb 5 - Non Prof, Low Pop, High Cost (A), High Fam Inc, Low 20s, Large City / Suburb 6 - For Prof, Low Pop, High Cost (A), Low Fam Inc, Upper 20s, Large City / Suburb 7 - For Prof, Low Pop, High Cost (P), Low Fam Inc, Mid 20s, Large City / Suburb 8 - Pub / For Prof, Low Pop, Mid Cost (P), Low Fam Inc, Upper 20s, Large City / Suburb</p>
+<ol style="list-style-type: decimal">
+<li>Public, Medium Pop, Mid Cost (A), Mid Family Income, Mid 20s, Varying Locales</li>
+<li>Private Non-Prof, Low Pop, Mid Cost (A), Mid Family Income, Mid 20s, Large City/Suburb</li>
+<li>Public, High Pop, Mid Cost (A), High Family Income, Low 20s, Large City/Suburb</li>
+<li>Private Non-Prof, Medium Pop, High Cost (A), High Family Income, Low 20s, Large City/Suburb</li>
+<li>Private Non-Prof, Low Pop, High Cost (A), High Family Income, Low 20s, Large City/Suburb</li>
+<li>Private For-Prof, Low Pop, High Cost (A), Low Family Income, Upper 20s, Large City/Suburb</li>
+<li>Private For-Prof, Low Pop, High Cost (P), Low Family Income, Mid 20s, Large City/Suburb</li>
+<li>Public/Private For-Prof, Low Pop, Mid Cost (P), Low Family Income, Upper 20s, Large City/Suburb</li>
+</ol>
 <p>There are some interesting take-aways from this already. It is pretty unsurprising that the majority of public schools are in cluster 1, where student population, cost, and family income are all around average, and cluster 7, where students are joining for-profit schools to try and gain new skills in their mid-20s since their incomes are on the lower side. Cluster 1 is also not dominated by any one locale, though the most are small towns or cities. Clusters 3, 4, and 5 also seem to indicate that the students going to schools in large locales are younger, have higher family incomes than the others, but still have different preferences on population and cost of their school.</p>
 <p>Finally, we can append the clusters to the end of the original data. Earlier in the process I made a table called <strong>schoolCluster2014</strong>, to which I can now assign clusters. Now if a student has a school in mind, for example “Drexel University”, they can do a lookup for that school and see what cluster it is in. In this case, Drexel is in cluster 4.</p>
 </div>

@@ -234,14 +234,14 @@ table(clusterGroups)
 
 Based on all of these factors, I came up with the following classifications:
 
-1 - Pub, Mid Pop, Mid Cost (A), Mid Fam Inc, Mid 20s, Varying Locales
-2 - Non Prof, Low Pop, Mid Cost (A), Mid Fam Inc, Mid 20s, Large City / Suburb
-3 - Pub, High Pop, Mid Cost (A), High Fam Inc, Low 20s, Large City / Suburb
-4 - Non Prof, Mid Pop, High Cost (A), High Fam Inc, Low 20s, Large City / Suburb
-5 - Non Prof, Low Pop, High Cost (A), High Fam Inc, Low 20s, Large City / Suburb
-6 - For Prof, Low Pop, High Cost (A), Low Fam Inc, Upper 20s, Large City / Suburb
-7 - For Prof, Low Pop, High Cost (P), Low Fam Inc, Mid 20s, Large City / Suburb
-8 - Pub / For Prof, Low Pop, Mid Cost (P), Low Fam Inc, Upper 20s, Large City / Suburb
+1. Public, Medium Pop, Mid Cost (A), Mid Family Income, Mid 20s, Varying Locales
+2. Private Non-Prof, Low Pop, Mid Cost (A), Mid Family Income, Mid 20s, Large City/Suburb
+3. Public, High Pop, Mid Cost (A), High Family Income, Low 20s, Large City/Suburb
+4. Private Non-Prof, Medium Pop, High Cost (A), High Family Income, Low 20s, Large City/Suburb
+5. Private Non-Prof, Low Pop, High Cost (A), High Family Income, Low 20s, Large City/Suburb
+6. Private For-Prof, Low Pop, High Cost (A), Low Family Income, Upper 20s, Large City/Suburb
+7. Private For-Prof, Low Pop, High Cost (P), Low Family Income, Mid 20s, Large City/Suburb
+8. Public/Private For-Prof, Low Pop, Mid Cost (P), Low Family Income, Upper 20s, Large City/Suburb
 
 There are some interesting take-aways from this already. It is pretty unsurprising that the majority of public schools are in cluster 1, where student population, cost, and family income are all around average, and cluster 7, where students are joining for-profit schools to try and gain new skills in their mid-20s since their incomes are on the lower side. Cluster 1 is also not dominated by any one locale, though the most are small towns or cities. Clusters 3, 4, and 5 also seem to indicate that the students going to schools in large locales are younger, have higher family incomes than the others, but still have different preferences on population and cost of their school.
 
