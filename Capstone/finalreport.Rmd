@@ -3,8 +3,8 @@ title: "The College Scorecard"
 author: "Varun Nadgir"
 date: "September 27, 2017"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 <style>
@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ### **Introduction**
 
-The [**College Scorecard**](https://collegescorecard.ed.gov/) is a service meant to help prospective students make their college decision. Whether by comparing size, popular majors, or comparing costs to the national average, the site's goal is to help the user find a good fit. For my Springboard Capstone Project, I used the [**dataset**](https://catalog.data.gov/dataset/college-scorecard) made available by the College Scorecard to try and find additional ways to help users in their decision. 
+[**The College Scorecard**](https://collegescorecard.ed.gov/) is a service meant to help prospective students make their college decision. Whether by comparing size, popular majors, or comparing costs to the national average, the site's goal is to help the user find a good fit. For my Springboard Capstone Project, I used the [**dataset**](https://catalog.data.gov/dataset/college-scorecard) made available by the College Scorecard to try and find additional ways to help users in their decision. 
 
 ### **The Data**
 
@@ -260,5 +260,22 @@ subset(schoolCluster2014, CLUSTER == 4)
 
 With an interactive UI, a student could now sort by population, cost, and compare schools based on their own preferences and needs. This brings us to the next and final tool.
 
-### College Scorecard Sandbox
+### **College Scorecard Sandbox**
 
+While it feels great to have built models that seem to get the job done, I still may not meet all the needs of the students. To account for this, I would like to also provide the tools for analysis to the students' themselves, using [**RShiny**](https://shiny.rstudio.com/). This allows an R developer to design a UI and set the various buttons and elements to trigger R scripts, essentially allowing a layman to perform R analysis without needing to know R. 
+
+[**The College Sandbox**](https://vanadgir.shinyapps.io/collegesandbox/) is the UI that I have created to serve this purpose. For it to work, I need to create any subsets that a user on the site may need. Currently, I have included a smaller version of **subdata** for custom plotting, as well as **schoolCluster2014** for cluster analysis. Since a scatterplot will not always be the best visualization for the selected X and Y axes, there are also options to plot as a histogram or a pie chart. To try a combination that works, enter "SAT_AVG" for the X-axis and "ADM_RATE" for the Y-axis, and press Update. This plot can answer the question: "What does my SAT score need to be to get into the school(s) I'm considering?" They would notice right away that the higher the SAT scores go, the lower the admission rates get, indicating that higher SAT scores are needed for the more exclusive schools. Though this is probably already widely known, seeing some actual numbers can help the student plan ahead and set realistic goals.
+
+A feature I would possibly like to introduce in the future is the ability to log in and save schools, plots, and data tables to a profile. I will have to learn more about server space and what steps I would need to take so that the site could handle a growing list of stored items. I also want the plots to be interactive, so that the user can zoom in or filter in real time rather than by pressing a button. The more steps I can take to ensure that the user experience is simple and intuitive, the more clarity the students will achieve from this tool.
+
+### **Conclusion**
+
+From 19 individual .csv files, to one large 2 GB file, to dozens of smaller data subsets (both raw and transformed), there is a lot to be discovered within the data provided by [**The College Scorecard**](https://collegescorecard.ed.gov/). Since there is so much available, machine learning methods like linear regression and clustering were fairly successful at adding more insights to what is available on their website. And now that we have these working baseline models, we could also experiment with adding other variables and seeing where there is room for improvements.
+
+Linear regression showed us that a school's cost of attendance is linked to the its highest provided degree, whether it is public or private, the student population size, the average faculty salary, the median student debt, and the average family income. While it may not be possible or reasonable for a school to make changes for some of these factors, but how many students they accept and how much aid they are willing to give are both areas they could look into if they are willing. Students can also use this model to see if it is worth waiting a year to go to college, in case their top choice seems like it will drop in cost by then.
+
+Clustering gave us a unique look at the spread of characteristics across the schools in 2014. With 8 uniquely defined clusters, finding similar schools is now an easy task. By looking at the table and filtering by cluster, a student can sort that cluster by cost, size, and locale to see other schools that fit their preference(s). Students with far reach schools could benefit from this by having backups that they would still be satisfied with attending, since they would be so similar. Even students without a particular school in mind could get some ideas on where to apply, as long as they have some preferences on the characteristics of the schools. 
+
+And lastly, I've provided an interactive UI that will help give students and their families the analytical tools they need to answer their own questions and try to learn more. The UI has an area to make custom plots out of a huge selection of variables, kept to a reasonable size since it is stored on a server, and also has the ability to filter and sort through the cluster data.
+
+If you have any questions, or you would like to see more detail in how I prepared the data and plots, you can refer to the [**appendix**](http://varun.pro/Springboard/Capstone/finalappendix.html). Or if you are interested in helping me improve our understanding of higher education and how to help students find a path to success, please feel free to [**email me**](mailto:vanadgir@gmail.com). Thank you very much for reading.

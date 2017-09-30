@@ -1,0 +1,19 @@
+---
+title: "The College Scorecard"
+author: "Varun Nadgir"
+date: "September 27, 2017"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+<style>
+body {text-align: justify}
+p {text-indent: 50px}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Capstone Project
