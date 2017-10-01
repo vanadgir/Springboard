@@ -1,3 +1,7 @@
+# README
+
+This folder includes all files related to my Springboard Foundations of Data Science Capstone project - R files documenting code, RMD files and the HTML/PDF associated with them, and the Sandbox folder which contains similar files for my RShiny app.
+
 ## External Links:
 * [College Scorecard Website](https://collegescorecard.ed.gov/)
 * [Dataset Source](https://catalog.data.gov/dataset/college-scorecard)
